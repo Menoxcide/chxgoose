@@ -2,7 +2,7 @@
 
 **Date:** 2026-09-18
 **Repo:** `/root/chxgoose` → https://chxgoose.com
-**Status:** approved in conversation, awaiting spec review
+**Status:** approved
 **Domain:** already on Vercel team `menoxcides-projects` (registered 2026-09-18, expires 2027-09-18). Not assigned to a project yet.
 
 ## Problem
