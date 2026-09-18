@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Nunito, Titan_One } from "next/font/google";
+import { Atkinson_Hyperlegible, Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 
-const titan = Titan_One({
-  weight: "400",
+const display = Barlow_Condensed({
+  weight: ["600", "800"],
   subsets: ["latin"],
   variable: "--font-display",
 });
 
-const nunito = Nunito({
+const body = Atkinson_Hyperlegible({
+  weight: ["400", "700"],
   subsets: ["latin"],
   variable: "--font-body",
 });
@@ -20,21 +21,22 @@ const plex = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "You found Billy — chxgoose",
-  description: "Silly Billy, porch goose at 905 Bridge. Honk to dress him tomorrow.",
+  title: "Billie — porch goose at 905 Bridge",
+  description:
+    "Plastic porch goose at 905 Bridge. Chip in and the winning outfit gets ordered and put on her.",
   metadataBase: new URL("https://chxgoose.com"),
   openGraph: {
-    title: "You found Billy",
-    description: "Porch goose. Dollar votes. Daily jokes. Honk.",
+    title: "Billie the porch goose",
+    description: "905 Bridge. Vote with dollars. We order the outfit.",
     url: "https://chxgoose.com",
-    images: [{ url: "/billy/bowtie.jpg" }],
+    images: [{ url: "/billie.jpg" }],
   },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
-      <body className={`${titan.variable} ${nunito.variable} ${plex.variable}`}>
+      <body className={`${display.variable} ${body.variable} ${plex.variable}`}>
         {children}
       </body>
     </html>

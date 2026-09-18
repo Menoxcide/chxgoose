@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
+import { HONK_FAIL } from "@/lib/copy";
 import {
   AMOUNT_META,
   AMOUNTS,
@@ -41,8 +42,7 @@ export function Porch({ state }: { state: PublicState }) {
 
   const winning = live.winning;
   const potMap = useMemo(() => {
-    const m = new Map(live.pots.map((p) => [p.outfitId, p.amountCents]));
-    return m;
+    return new Map(live.pots.map((p) => [p.outfitId, p.amountCents]));
   }, [live.pots]);
 
   async function checkout(outfitId: VoteOutfitId, amountCents: AmountCents) {
@@ -56,23 +56,23 @@ export function Porch({ state }: { state: PublicState }) {
       });
       const data = await res.json();
       if (!res.ok || !data.url) {
-        setError(data.error ?? "Billy didn’t get that honk, try again.");
+        setError(data.error ?? HONK_FAIL);
         setBusy(false);
         return;
       }
       window.location.href = data.url;
     } catch {
-      setError("Billy didn’t get that honk, try again.");
+      setError(HONK_FAIL);
       setBusy(false);
     }
   }
 
   async function share() {
     const url = "https://chxgoose.com";
-    const text = "I found Billy the porch goose.";
+    const text = "Billie the porch goose, 905 Bridge.";
     try {
       if (navigator.share) {
-        await navigator.share({ title: "chxgoose", text, url });
+        await navigator.share({ title: "Billie", text, url });
         return;
       }
     } catch {
@@ -84,23 +84,29 @@ export function Porch({ state }: { state: PublicState }) {
   return (
     <>
       <section>
-        <h2>Dress Billy tomorrow</h2>
+        <h2>Next outfit</h2>
         <p className="lede">
-          Highest pot wins. Owner dresses the real goose in the morning.
+          Highest pot wins. We order that Amazon listing and put it on her.
           {winning
-            ? ` Winning right now: ${OUTFIT_META[winning].name}.`
-            : " Nobody yet — Billy’s in a bow tie until you honk."}
+            ? ` Leading: ${OUTFIT_META[winning].name}.`
+            : " Nothing leading yet."}
         </p>
-        {live.degraded && (
-          <p className="warn">Honk later — the porch ledger is napping.</p>
-        )}
+        {live.degraded && <p className="warn">Honks are offline.</p>}
         {error && <p className="warn">{error}</p>}
-        <div className="grid">
+        <ul className="order">
           {VOTE_OUTFIT_IDS.map((id) => (
-            <article key={id} className={id === winning ? "card leader" : "card"}>
-              <img src={OUTFIT_META[id].src} alt={OUTFIT_META[id].name} />
-              <h3>{OUTFIT_META[id].name}</h3>
-              <p className="pot">{dollars(potMap.get(id) ?? 0)} in the pot</p>
+            <li key={id} className={id === winning ? "row lead" : "row"}>
+              <span className="name">
+                {OUTFIT_META[id].name}
+                <a
+                  href={OUTFIT_META[id].amazon}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Amazon
+                </a>
+              </span>
+              <span className="pot">{dollars(potMap.get(id) ?? 0)}</span>
               <button
                 className="honk"
                 disabled={live.degraded || busy}
@@ -108,16 +114,16 @@ export function Porch({ state }: { state: PublicState }) {
               >
                 Honk
               </button>
-            </article>
+            </li>
           ))}
-        </div>
+        </ul>
       </section>
 
       <section className="map-block">
-        <h2>Where’d you honk from?</h2>
-        <p className="lede">Tap the map. Optional tiny label. {live.flockCount} in the flock.</p>
+        <h2>Where from?</h2>
+        <p className="lede">{live.flockCount} pins.</p>
         {live.degraded ? (
-          <p className="warn">Map’s napping. Honk later.</p>
+          <p className="warn">Map is offline.</p>
         ) : (
           <FlockMap pins={live.pins} />
         )}
@@ -125,18 +131,23 @@ export function Porch({ state }: { state: PublicState }) {
 
       <footer className="footer">
         <p>
-          {live.honkCount} honks · Billy is a real goose on a real porch.
+          {live.honkCount} honks · 905 Bridge · outfits from Amazon
         </p>
         <button className="share" type="button" onClick={share}>
-          Share Billy
+          Share
         </button>
       </footer>
 
       {pick && (
-        <div className="sheet" role="dialog" aria-label="Pick a honk">
+        <div className="sheet" role="dialog" aria-label="Choose an amount">
           <div className="sheet-card">
-            <h2>Honk for {OUTFIT_META[pick].name}</h2>
-            <p className="lede">Pick a silly amount. Stripe takes it from here.</p>
+            <h2>{OUTFIT_META[pick].name}</h2>
+            <p className="lede">
+              Goes on the pot. Listing:{" "}
+              <a href={OUTFIT_META[pick].amazon} target="_blank" rel="noopener noreferrer">
+                Amazon
+              </a>
+            </p>
             <div className="chips">
               {AMOUNTS.map((cents) => (
                 <button
@@ -145,14 +156,12 @@ export function Porch({ state }: { state: PublicState }) {
                   disabled={busy}
                   onClick={() => checkout(pick, cents)}
                 >
-                  <strong>
-                    {AMOUNT_META[cents].dollars} · {AMOUNT_META[cents].label}
-                  </strong>
+                  {AMOUNT_META[cents].dollars}
                 </button>
               ))}
             </div>
             <button className="ghost" type="button" onClick={() => setPick(null)}>
-              never mind
+              Cancel
             </button>
           </div>
         </div>
@@ -160,7 +169,7 @@ export function Porch({ state }: { state: PublicState }) {
 
       {honked && (
         <div className="overlay" onClick={() => setHonked(false)} role="status">
-          <div className="overlay-card">Billy felt that</div>
+          <div className="overlay-card">Paid. It’s on the pot.</div>
         </div>
       )}
     </>

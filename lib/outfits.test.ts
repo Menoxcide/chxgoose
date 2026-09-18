@@ -8,10 +8,10 @@ import {
 } from "./outfits";
 
 describe("allowlists", () => {
-  it("has eight vote outfits and excludes the bow tie", () => {
-    expect(VOTE_OUTFIT_IDS).toHaveLength(8);
+  it("has five Amazon vote outfits and excludes the football default", () => {
+    expect(VOTE_OUTFIT_IDS).toHaveLength(5);
     expect(isVoteOutfit(DEFAULT_OUTFIT)).toBe(false);
-    expect(isVoteOutfit("rain-hat")).toBe(true);
+    expect(isVoteOutfit("hawaiian")).toBe(true);
   });
 
   it("only allows the three honk amounts", () => {

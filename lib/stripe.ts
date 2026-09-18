@@ -40,8 +40,8 @@ export async function createHonkSession(input: {
           currency: "usd",
           unit_amount: input.amountCents,
           product_data: {
-            name: `Honk: ${chip.dollars} toward Billy's ${name}`,
-            description: chip.label,
+            name: `${chip.dollars} toward Billie’s ${name}`,
+            description: OUTFIT_META[input.outfitId].amazon,
           },
         },
       },

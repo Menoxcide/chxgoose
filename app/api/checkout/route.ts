@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { HONK_FAIL } from "@/lib/copy";
 import { raceDate } from "@/lib/detroit";
 import { isAmount, isVoteOutfit } from "@/lib/outfits";
 import { createHonkSession } from "@/lib/stripe";
@@ -9,12 +10,12 @@ export async function POST(req: Request) {
   try {
     body = await req.json();
   } catch {
-    return NextResponse.json({ error: "Billy didn’t get that honk, try again." }, { status: 400 });
+    return NextResponse.json({ error: HONK_FAIL }, { status: 400 });
   }
   const outfitId = body.outfitId;
   const amountCents = body.amountCents;
   if (!outfitId || !isVoteOutfit(outfitId) || typeof amountCents !== "number" || !isAmount(amountCents)) {
-    return NextResponse.json({ error: "Billy didn’t get that honk, try again." }, { status: 400 });
+    return NextResponse.json({ error: HONK_FAIL }, { status: 400 });
   }
   try {
     await ensureSchema();
@@ -32,12 +33,12 @@ export async function POST(req: Request) {
     });
     if (!url) {
       return NextResponse.json(
-        { error: "Billy didn’t get that honk, try again." },
+        { error: HONK_FAIL },
         { status: 503 },
       );
     }
     return NextResponse.json({ url });
   } catch {
-    return NextResponse.json({ error: "Billy didn’t get that honk, try again." }, { status: 500 });
+    return NextResponse.json({ error: HONK_FAIL }, { status: 500 });
   }
 }

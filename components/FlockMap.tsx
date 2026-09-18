@@ -61,14 +61,14 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
               key={`${p.lat}-${p.lng}-${i}`}
               center={[p.lat, p.lng]}
               radius={8}
-              pathOptions={{ color: "#5c3a21", fillColor: "#e4572e", fillOpacity: 0.95 }}
+              pathOptions={{ color: "#143029", fillColor: "#d63b12", fillOpacity: 0.95 }}
             />
           ))}
           {draft && (
             <CircleMarker
               center={[draft.lat, draft.lng]}
               radius={10}
-              pathOptions={{ color: "#2b6b8a", fillColor: "#f4b942", fillOpacity: 1 }}
+              pathOptions={{ color: "#e3b23c", fillColor: "#e3b23c", fillOpacity: 1 }}
             />
           )}
         </MapContainer>
@@ -77,7 +77,7 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
         <div className="pin-prompt">
           <input
             maxLength={40}
-            placeholder="Traverse City? (optional)"
+            placeholder="Town (optional)"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
           />
@@ -86,7 +86,7 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
           </button>
         </div>
       )}
-      <p className="map-note">Tap where you’re from. No name required.</p>
+      <p className="map-note">Tap the map. Label optional.</p>
     </>
   );
 }
