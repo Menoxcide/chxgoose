@@ -27,7 +27,7 @@ There is a real porch goose at **905 Bridge** in a Michigan vacation town. Peopl
 - Joke archive, merch store, blog, Northern Forge cross-promo, marketing-queue jobs.
 - Custom card form (Payment Element). Checkout Session hosted page only.
 - Stripe Connect / marketplaces. Direct charges to the owner’s Stripe account.
-- Names required on the map. Town/state or a tap is enough.
+- Required names on the map. A tap plus optional short label is enough.
 
 ## Constraints
 
@@ -158,7 +158,7 @@ Silly and goosy, not a fudge-shop brochure and not a startup landing page. Big t
 ## Deferred (explicit)
 
 - Real porch photos per outfit.
-- Names required on the map. A tap plus optional short label is enough.
+- Named town on the hero if the owner wants it later.
 - Custom dollar amount.
 - Email when a new leader takes tomorrow.
 - “I met Billy” postcard download.
