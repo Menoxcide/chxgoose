@@ -129,7 +129,7 @@ export function Porch({ state }: { state: PublicState }) {
         {live.degraded ? (
           <p className="warn">Map is offline.</p>
         ) : (
-          <FlockMap pins={live.pins} />
+          <FlockMap pins={live.pins} alreadyPinned={live.alreadyPinned} />
         )}
       </section>
 

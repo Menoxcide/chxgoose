@@ -44,14 +44,14 @@ export async function ensureSchema() {
   )`;
 }
 
-async function metaGet(key: string): Promise<string | null> {
+export async function readMeta(key: string): Promise<string | null> {
   const sql = getSql();
   if (!sql) return null;
   const rows = await sql`SELECT value FROM meta WHERE key = ${key}`;
   return (rows[0]?.value as string | undefined) ?? null;
 }
 
-async function metaSet(key: string, value: string) {
+export async function writeMeta(key: string, value: string) {
   const sql = getSql();
   if (!sql) return;
   await sql`
@@ -61,12 +61,12 @@ async function metaSet(key: string, value: string) {
 }
 
 export async function readWearing(): Promise<OutfitId> {
-  const v = await metaGet("wearing_outfit_id");
+  const v = await readMeta("wearing_outfit_id");
   return v && isOutfit(v) ? v : DEFAULT_OUTFIT;
 }
 
 export async function readHonkCount(): Promise<number> {
-  const v = await metaGet("honk_count");
+  const v = await readMeta("honk_count");
   const n = v ? Number(v) : 0;
   return Number.isFinite(n) ? n : 0;
 }
@@ -113,7 +113,7 @@ export async function performRollover(now: Date = new Date()) {
   const sql = getSql();
   if (!sql) return { did: false as const };
   const today = raceDate(now);
-  const stored = await metaGet("race_date");
+  const stored = await readMeta("race_date");
   if (stored === today) return { did: false as const };
 
   const oldDate = stored;
@@ -126,10 +126,10 @@ export async function performRollover(now: Date = new Date()) {
       VALUES (${oldDate}::date, ${win}, now())
       ON CONFLICT (race_date) DO NOTHING
     `;
-    await metaSet("wearing_outfit_id", wearing);
+    await writeMeta("wearing_outfit_id", wearing);
   }
 
-  await metaSet("race_date", today);
+  await writeMeta("race_date", today);
   await seedPotsIfMissing(today);
   return { did: true as const, today };
 }
@@ -177,7 +177,7 @@ export async function recordHonk(input: {
   }
 
   const count = (await readHonkCount()) + 1;
-  await metaSet("honk_count", String(count));
+  await writeMeta("honk_count", String(count));
   return { inserted: true };
 }
 
@@ -213,9 +213,9 @@ export async function flockCount() {
 }
 
 export async function markDressed(date: string) {
-  await metaSet("dressed_for", date);
+  await writeMeta("dressed_for", date);
 }
 
 export async function dressedFor(): Promise<string | null> {
-  return metaGet("dressed_for");
+  return readMeta("dressed_for");
 }

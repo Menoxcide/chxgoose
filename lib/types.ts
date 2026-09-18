@@ -22,4 +22,5 @@ export type PublicState = {
   raceDate: string;
   dressedToday: boolean;
   degraded: boolean;
+  alreadyPinned: boolean;
 };

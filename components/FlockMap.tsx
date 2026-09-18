@@ -18,17 +18,27 @@ function ClickCatch({
   return null;
 }
 
-export function FlockMap({ pins }: { pins: PublicPin[] }) {
+export function FlockMap({
+  pins,
+  alreadyPinned,
+}: {
+  pins: PublicPin[];
+  alreadyPinned: boolean;
+}) {
   const [draft, setDraft] = useState<{ lat: number; lng: number } | null>(null);
   const [label, setLabel] = useState("");
   const [local, setLocal] = useState(pins);
   const [saving, setSaving] = useState(false);
+  const [pinned, setPinned] = useState(alreadyPinned);
+  const [note, setNote] = useState<string | null>(null);
 
   const markers = useMemo(() => local, [local]);
+  const canDrop = !pinned;
 
   async function drop() {
-    if (!draft) return;
+    if (!draft || !canDrop) return;
     setSaving(true);
+    setNote(null);
     const body = { lat: draft.lat, lng: draft.lng, label: label.trim() || undefined };
     const res = await fetch("/api/pin", {
       method: "POST",
@@ -36,10 +46,20 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
       body: JSON.stringify(body),
     });
     setSaving(false);
-    if (!res.ok) return;
+    if (res.status === 409) {
+      setPinned(true);
+      setDraft(null);
+      setNote("You already dropped a pin.");
+      return;
+    }
+    if (!res.ok) {
+      setNote("Pin didn’t stick. Try once more.");
+      return;
+    }
     setLocal((prev) => [{ lat: draft.lat, lng: draft.lng, label: label.trim() || null }, ...prev]);
     setDraft(null);
     setLabel("");
+    setPinned(true);
   }
 
   return (
@@ -55,7 +75,7 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <ClickCatch onPick={(lat, lng) => setDraft({ lat, lng })} />
+          {canDrop ? <ClickCatch onPick={(lat, lng) => setDraft({ lat, lng })} /> : null}
           {markers.map((p, i) => (
             <CircleMarker
               key={`${p.lat}-${p.lng}-${i}`}
@@ -64,7 +84,7 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
               pathOptions={{ color: "#5c4033", fillColor: "#b85c38", fillOpacity: 0.95 }}
             />
           ))}
-          {draft && (
+          {draft && canDrop && (
             <CircleMarker
               center={[draft.lat, draft.lng]}
               radius={10}
@@ -73,7 +93,7 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
           )}
         </MapContainer>
       </div>
-      {draft && (
+      {draft && canDrop && (
         <div className="pin-prompt">
           <input
             maxLength={40}
@@ -86,7 +106,12 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
           </button>
         </div>
       )}
-      <p className="map-note">Tap the map. Label optional.</p>
+      <p className="map-note">
+        {pinned
+          ? "You already dropped your pin. One per visitor."
+          : "Tap once. One pin per visitor."}
+      </p>
+      {note ? <p className="map-note">{note}</p> : null}
     </>
   );
 }

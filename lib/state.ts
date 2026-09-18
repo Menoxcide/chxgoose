@@ -1,5 +1,5 @@
 import { raceDate } from "./detroit";
-import { jokeOfTheDay } from "./jokes";
+import { dailyJoke, jokeOfTheDay } from "./jokes";
 import { DEFAULT_OUTFIT } from "./outfits";
 import { leader } from "./race";
 import type { PublicState } from "./types";
@@ -16,7 +16,10 @@ import {
   seedPotsIfMissing,
 } from "./db";
 
-export function staticState(now: Date = new Date()): PublicState {
+export function staticState(
+  now: Date = new Date(),
+  alreadyPinned = false,
+): PublicState {
   const today = raceDate(now);
   return {
     wearing: DEFAULT_OUTFIT,
@@ -29,23 +32,28 @@ export function staticState(now: Date = new Date()): PublicState {
     raceDate: today,
     dressedToday: false,
     degraded: true,
+    alreadyPinned,
   };
 }
 
-export async function loadState(now: Date = new Date()): Promise<PublicState> {
-  if (!getSql()) return staticState(now);
+export async function loadState(
+  now: Date = new Date(),
+  alreadyPinned = false,
+): Promise<PublicState> {
+  if (!getSql()) return staticState(now, alreadyPinned);
   try {
     await ensureSchema();
     await performRollover(now);
     const today = raceDate(now);
     await seedPotsIfMissing(today);
-    const [pots, wearing, honkCount, pins, flock, dressed] = await Promise.all([
+    const [pots, wearing, honkCount, pins, flock, dressed, joke] = await Promise.all([
       readPots(today),
       readWearing(),
       readHonkCount(),
       readPins(),
       flockCount(),
       dressedFor(),
+      dailyJoke(now),
     ]);
     return {
       wearing,
@@ -54,12 +62,13 @@ export async function loadState(now: Date = new Date()): Promise<PublicState> {
       pins,
       honkCount,
       flockCount: flock,
-      joke: jokeOfTheDay(now),
+      joke,
       raceDate: today,
       dressedToday: dressed === today,
       degraded: false,
+      alreadyPinned,
     };
   } catch {
-    return staticState(now);
+    return staticState(now, alreadyPinned);
   }
 }

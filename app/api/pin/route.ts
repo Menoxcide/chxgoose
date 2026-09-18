@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { insertPin } from "@/lib/db";
+import { PIN_COOKIE, PIN_COOKIE_OPTS, hasPinCookie } from "@/lib/pin";
 
 function cleanLabel(raw: unknown): string | null {
   if (typeof raw !== "string") return null;
@@ -8,6 +9,12 @@ function cleanLabel(raw: unknown): string | null {
 }
 
 export async function POST(req: Request) {
+  if (hasPinCookie(req.headers.get("cookie"))) {
+    return NextResponse.json(
+      { error: "You already dropped a pin.", alreadyPinned: true },
+      { status: 409 },
+    );
+  }
   let body: { lat?: unknown; lng?: unknown; label?: unknown };
   try {
     body = await req.json();
@@ -21,7 +28,9 @@ export async function POST(req: Request) {
   }
   try {
     await insertPin(lat, lng, cleanLabel(body.label));
-    return NextResponse.json({ ok: true });
+    const res = NextResponse.json({ ok: true, alreadyPinned: true });
+    res.cookies.set(PIN_COOKIE, "1", PIN_COOKIE_OPTS);
+    return res;
   } catch {
     return NextResponse.json({ error: "honk later" }, { status: 503 });
   }
