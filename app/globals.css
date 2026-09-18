@@ -1,13 +1,14 @@
 :root {
-  --pine: #143029;
-  --moss: #1c4034;
-  --paper: #f3efe4;
-  --ink: #12110f;
-  --stamp: #d63b12;
-  --tape: #e3b23c;
-  --mute: #c9c2b0;
-  --display: var(--font-display), "Barlow Condensed", system-ui, sans-serif;
-  --body: var(--font-body), "Atkinson Hyperlegible", system-ui, sans-serif;
+  --sand: #e8d7b8;
+  --tan: #c9a882;
+  --clay: #a67c52;
+  --umber: #5c4033;
+  --ink: #2a2118;
+  --cream: #f6ead4;
+  --rust: #b85c38;
+  --moss: #6b7f4f;
+  --display: var(--font-display), "Alfa Slab One", Georgia, serif;
+  --body: var(--font-body), Nunito, system-ui, sans-serif;
   --mono: var(--font-mono), "IBM Plex Mono", ui-monospace, monospace;
 }
 
@@ -20,13 +21,23 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: var(--pine);
-  color: var(--paper);
+  background: var(--sand);
+  color: var(--ink);
   font-family: var(--body);
 }
 
+body {
+  background-image:
+    radial-gradient(900px 420px at 50% -80px, #f3e4c4 0%, transparent 70%),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 22px,
+      rgba(92, 64, 51, 0.04) 22px 23px
+    );
+}
+
 a {
-  color: var(--tape);
+  color: var(--rust);
 }
 
 button,
@@ -40,48 +51,62 @@ img {
 }
 
 .porch {
-  max-width: 640px;
+  max-width: 680px;
   margin: 0 auto;
-  padding: 1.75rem 1.1rem 3rem;
+  padding: 1.6rem 1.1rem 3.2rem;
 }
 
 .hero {
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(243, 239, 228, 0.18);
+  text-align: center;
 }
 
 .eyebrow {
   font-family: var(--mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.16em;
+  font-size: 0.74rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--tape);
-  margin: 0 0 0.35rem;
+  color: var(--clay);
+  margin: 0 0 0.45rem;
 }
 
 h1 {
   font-family: var(--display);
-  font-weight: 800;
-  font-size: clamp(4.2rem, 22vw, 7.2rem);
-  line-height: 0.8;
-  letter-spacing: -0.03em;
-  text-transform: uppercase;
-  margin: 0 0 0.7rem;
+  font-weight: 400;
+  font-size: clamp(2.15rem, 8.2vw, 3.5rem);
+  line-height: 1.05;
+  margin: 0 0 0.55rem;
+  color: var(--umber);
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .sub {
-  margin: 0;
+  margin: 0 auto;
   max-width: 28rem;
   font-size: 1.12rem;
-  line-height: 1.4;
-  color: var(--mute);
+  line-height: 1.45;
+  color: var(--umber);
+}
+
+.polaroid {
+  margin: 1.25rem auto 0.4rem;
+  padding: 0.7rem 0.7rem 1.05rem;
+  background: var(--cream);
+  box-shadow: 0 10px 0 var(--tan), 0 18px 28px rgba(42, 33, 24, 0.18);
+  transform: rotate(-1.2deg);
 }
 
 .portrait {
   display: block;
   width: 100%;
   height: auto;
-  margin: 1.1rem 0 0.4rem;
+}
+
+.polaroid figcaption {
+  margin-top: 0.55rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--clay);
 }
 
 .now {
@@ -91,117 +116,142 @@ h1 {
 }
 
 .joke {
-  margin: 1.25rem 0 1.75rem;
-  font-size: 1.15rem;
+  background: var(--cream);
+  border: 3px solid var(--umber);
+  padding: 1rem 1.1rem 1.15rem;
+  margin: 1.6rem 0 1.8rem;
+  box-shadow: 6px 6px 0 var(--tan);
+}
+
+.punch {
+  margin: 0.25rem 0 0;
+  font-size: 1.22rem;
   line-height: 1.45;
 }
 
 h2 {
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 1.65rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-weight: 400;
+  font-size: 1.55rem;
   margin: 0 0 0.3rem;
+  color: var(--umber);
 }
 
 .lede {
   margin: 0 0 0.9rem;
-  color: var(--mute);
+  color: var(--clay);
 }
 
 .order {
   list-style: none;
   margin: 0;
   padding: 0;
-  border-top: 1px solid rgba(243, 239, 228, 0.2);
+  background: var(--cream);
+  border: 3px solid var(--umber);
 }
 
 .row {
   display: grid;
   grid-template-columns: 1fr auto auto;
-  gap: 0.75rem;
+  gap: 0.7rem;
   align-items: center;
-  padding: 0.7rem 0;
-  border-bottom: 1px solid rgba(243, 239, 228, 0.2);
+  padding: 0.75rem 0.8rem;
+  border-bottom: 2px solid var(--tan);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.row.lead {
+  background: #efe0c0;
 }
 
 .row.lead .name {
-  color: var(--tape);
+  color: var(--rust);
+}
+
+.lead-tag {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rust);
 }
 
 .name {
   display: flex;
   flex-direction: column;
-  gap: 0.12rem;
-  font-size: 1.15rem;
+  gap: 0.1rem;
+  font-size: 1.12rem;
+  font-weight: 700;
 }
 
 .name a {
   font-family: var(--mono);
-  font-size: 0.72rem;
+  font-weight: 400;
+  font-size: 0.7rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--tape);
+  color: var(--clay);
   text-decoration: none;
 }
 
-.name a:hover {
+.name a:hover,
+.now a:hover {
   text-decoration: underline;
-}
-
-.now a {
-  color: var(--tape);
-}
-
-.sheet-card a {
-  color: var(--stamp);
 }
 
 .pot {
   font-family: var(--mono);
-  font-size: 0.9rem;
+  font-size: 0.95rem;
+  font-weight: 600;
 }
 
 .honk {
   appearance: none;
   border: 0;
-  background: var(--stamp);
-  color: var(--paper);
+  background: var(--rust);
+  color: var(--cream);
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 1rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.45rem 0.8rem 0.4rem;
+  font-size: 1.02rem;
+  padding: 0.5rem 0.85rem 0.42rem;
   cursor: pointer;
+  box-shadow: 3px 3px 0 var(--umber);
+}
+
+.honk:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0 var(--umber);
 }
 
 .honk:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .honk:focus-visible,
 .chip:focus-visible,
 .share:focus-visible,
 .ghost:focus-visible {
-  outline: 2px solid var(--tape);
+  outline: 3px solid var(--moss);
   outline-offset: 2px;
 }
 
 .map-block {
-  margin: 2.2rem 0 1.4rem;
+  margin: 2.1rem 0 1.4rem;
 }
 
 .map {
   height: 320px;
-  border: 1px solid rgba(243, 239, 228, 0.25);
+  border: 3px solid var(--umber);
+  box-shadow: 6px 6px 0 var(--tan);
 }
 
 .map-note {
-  font-size: 0.9rem;
-  color: var(--mute);
+  font-size: 0.95rem;
+  color: var(--clay);
 }
 
 .pin-prompt {
@@ -212,14 +262,10 @@ h2 {
 
 .pin-prompt input {
   flex: 1;
-  border: 1px solid rgba(243, 239, 228, 0.3);
-  background: var(--moss);
-  color: var(--paper);
+  border: 3px solid var(--umber);
+  background: var(--cream);
+  color: var(--ink);
   padding: 0.55rem 0.7rem;
-}
-
-.pin-prompt input::placeholder {
-  color: var(--mute);
 }
 
 .footer {
@@ -228,30 +274,27 @@ h2 {
   gap: 0.6rem 1rem;
   align-items: center;
   justify-content: space-between;
-  margin-top: 1.4rem;
+  margin-top: 1.5rem;
   padding-top: 1rem;
-  border-top: 1px solid rgba(243, 239, 228, 0.18);
-  font-size: 0.9rem;
-  color: var(--mute);
+  border-top: 3px dashed var(--tan);
+  font-size: 0.95rem;
+  color: var(--umber);
 }
 
 .share {
   appearance: none;
-  border: 1px solid var(--paper);
-  background: transparent;
-  color: var(--paper);
+  border: 3px solid var(--umber);
+  background: var(--tan);
+  color: var(--ink);
   font-family: var(--display);
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  padding: 0.4rem 0.8rem;
+  padding: 0.4rem 0.85rem 0.32rem;
   cursor: pointer;
 }
 
 .sheet {
   position: fixed;
   inset: 0;
-  background: rgba(10, 20, 16, 0.72);
+  background: rgba(42, 33, 24, 0.55);
   display: grid;
   place-items: end center;
   z-index: 20;
@@ -260,43 +303,48 @@ h2 {
 
 .sheet-card {
   width: min(420px, 100%);
-  background: var(--paper);
+  background: var(--cream);
   color: var(--ink);
+  border: 3px solid var(--umber);
   padding: 1.1rem 1rem 1rem;
+  box-shadow: 0 -10px 0 var(--tan);
 }
 
 .sheet-card h2 {
-  color: var(--ink);
+  color: var(--umber);
 }
 
 .sheet-card .lede {
-  color: #5c574c;
+  color: var(--clay);
 }
 
 .chips {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
-  margin: 0.8rem 0;
+  margin: 0.85rem 0;
 }
 
 .chip {
   appearance: none;
-  border: 1px solid var(--ink);
-  background: var(--paper);
+  border: 3px solid var(--umber);
+  background: var(--sand);
   color: var(--ink);
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 1.2rem;
-  padding: 0.7rem 0.4rem;
+  font-size: 1.25rem;
+  padding: 0.75rem 0.4rem 0.65rem;
   cursor: pointer;
+}
+
+.chip:hover {
+  background: var(--tan);
 }
 
 .ghost {
   appearance: none;
   background: transparent;
   border: 0;
-  color: #5c574c;
+  color: var(--clay);
   cursor: pointer;
   width: 100%;
   padding: 0.4rem;
@@ -305,7 +353,7 @@ h2 {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 20, 16, 0.8);
+  background: rgba(42, 33, 24, 0.62);
   display: grid;
   place-items: center;
   z-index: 30;
@@ -313,21 +361,42 @@ h2 {
 }
 
 .overlay-card {
-  background: var(--paper);
-  color: var(--ink);
-  padding: 1.2rem 1.1rem;
+  background: var(--rust);
+  color: var(--cream);
+  border: 4px solid var(--umber);
+  padding: 1.3rem 1.15rem;
   font-family: var(--display);
-  font-weight: 800;
-  font-size: 1.6rem;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
+  font-size: 1.55rem;
   text-align: center;
   max-width: 18rem;
+  transform: rotate(-2deg);
+  animation: pop 0.35s ease-out;
 }
 
 .warn {
-  background: #3a1c14;
-  color: #f3c7b6;
+  background: #ead3b3;
+  border: 2px dashed var(--rust);
+  color: var(--umber);
   padding: 0.65rem 0.75rem;
   margin-bottom: 0.8rem;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.86) rotate(-8deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(-2deg);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .polaroid,
+  .overlay-card,
+  .honk {
+    transform: none;
+    animation: none;
+  }
 }

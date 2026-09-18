@@ -69,7 +69,7 @@ export function Porch({ state }: { state: PublicState }) {
 
   async function share() {
     const url = "https://chxgoose.com";
-    const text = "Billie the porch goose, 905 Bridge.";
+    const text = "You found Billie! Porch goose at 905 Bridge.";
     try {
       if (navigator.share) {
         await navigator.share({ title: "Billie", text, url });
@@ -84,12 +84,12 @@ export function Porch({ state }: { state: PublicState }) {
   return (
     <>
       <section>
-        <h2>Next outfit</h2>
+        <h2>Dress Billie tomorrow</h2>
         <p className="lede">
-          Highest pot wins. We order that Amazon listing and put it on her.
+          Dollar votes. Highest pot gets ordered from Amazon and put on her.
           {winning
-            ? ` Leading: ${OUTFIT_META[winning].name}.`
-            : " Nothing leading yet."}
+            ? ` Right now ${OUTFIT_META[winning].name} is winning.`
+            : " First honk starts the race."}
         </p>
         {live.degraded && <p className="warn">Honks are offline.</p>}
         {error && <p className="warn">{error}</p>}
@@ -98,6 +98,7 @@ export function Porch({ state }: { state: PublicState }) {
             <li key={id} className={id === winning ? "row lead" : "row"}>
               <span className="name">
                 {OUTFIT_META[id].name}
+                {id === winning ? <span className="lead-tag">winning</span> : null}
                 <a
                   href={OUTFIT_META[id].amazon}
                   target="_blank"
@@ -120,8 +121,11 @@ export function Porch({ state }: { state: PublicState }) {
       </section>
 
       <section className="map-block">
-        <h2>Where from?</h2>
-        <p className="lede">{live.flockCount} pins.</p>
+        <h2>Where’d you honk from?</h2>
+        <p className="lede">
+          Tap the map. Billie’s collecting hometowns
+          {live.flockCount ? ` — ${live.flockCount} so far.` : "."}
+        </p>
         {live.degraded ? (
           <p className="warn">Map is offline.</p>
         ) : (
@@ -134,18 +138,18 @@ export function Porch({ state }: { state: PublicState }) {
           {live.honkCount} honks · 905 Bridge · outfits from Amazon
         </p>
         <button className="share" type="button" onClick={share}>
-          Share
+          Tell someone
         </button>
       </footer>
 
       {pick && (
         <div className="sheet" role="dialog" aria-label="Choose an amount">
           <div className="sheet-card">
-            <h2>{OUTFIT_META[pick].name}</h2>
+            <h2>Honk for {OUTFIT_META[pick].name}</h2>
             <p className="lede">
-              Goes on the pot. Listing:{" "}
+              Pick an amount.{" "}
               <a href={OUTFIT_META[pick].amazon} target="_blank" rel="noopener noreferrer">
-                Amazon
+                See the listing
               </a>
             </p>
             <div className="chips">
@@ -169,7 +173,7 @@ export function Porch({ state }: { state: PublicState }) {
 
       {honked && (
         <div className="overlay" onClick={() => setHonked(false)} role="status">
-          <div className="overlay-card">Paid. It’s on the pot.</div>
+          <div className="overlay-card">Honk! Billie felt that.</div>
         </div>
       )}
     </>

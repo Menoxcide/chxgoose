@@ -15,28 +15,25 @@ export default async function Home() {
   return (
     <main className="porch">
       <header className="hero">
-        <p className="eyebrow">905 Bridge</p>
-        <h1>Billie</h1>
+        <p className="eyebrow">905 Bridge · porch goose</p>
+        <h1>You found Billie!</h1>
         <p className="sub">
-          Plastic porch goose. Chip in; the winning look gets ordered and put on her.
+          Plastic, dressed, and taking visitors. Chip in — the winning look gets ordered and put on her.
         </p>
         {photo ? (
-          <img className="portrait" src="/billie.jpg" alt="Billie on the porch at 905 Bridge" />
-        ) : null}
-        <p className="now">
-          On her now: {look.name}
-          {look.amazon ? (
-            <>
-              {" · "}
-              <a href={look.amazon} target="_blank" rel="noopener noreferrer">
-                Amazon
-              </a>
-            </>
-          ) : null}
-        </p>
+          <figure className="polaroid">
+            <img className="portrait" src="/billie.jpg" alt="Billie on the porch at 905 Bridge" />
+            <figcaption>Billie, 905 Bridge. Currently: {look.name}.</figcaption>
+          </figure>
+        ) : (
+          <p className="now">On her now: {look.name}</p>
+        )}
       </header>
 
-      <p className="joke">{state.joke}</p>
+      <section className="joke" aria-label="Joke of the day">
+        <p className="eyebrow">Joke of the day</p>
+        <p className="punch">{state.joke}</p>
+      </section>
 
       <Porch state={state} />
     </main>

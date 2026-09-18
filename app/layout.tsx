@@ -1,15 +1,14 @@
 import type { Metadata } from "next";
-import { Atkinson_Hyperlegible, Barlow_Condensed, IBM_Plex_Mono } from "next/font/google";
+import { Alfa_Slab_One, IBM_Plex_Mono, Nunito } from "next/font/google";
 import "./globals.css";
 
-const display = Barlow_Condensed({
-  weight: ["600", "800"],
+const display = Alfa_Slab_One({
+  weight: "400",
   subsets: ["latin"],
   variable: "--font-display",
 });
 
-const body = Atkinson_Hyperlegible({
-  weight: ["400", "700"],
+const body = Nunito({
   subsets: ["latin"],
   variable: "--font-body",
 });
@@ -21,13 +20,13 @@ const plex = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Billie — porch goose at 905 Bridge",
+  title: "You found Billie! — chxgoose",
   description:
-    "Plastic porch goose at 905 Bridge. Chip in and the winning outfit gets ordered and put on her.",
+    "You found Billie the porch goose at 905 Bridge. Joke of the day, then chip in — the winning Amazon outfit gets put on her.",
   metadataBase: new URL("https://chxgoose.com"),
   openGraph: {
-    title: "Billie the porch goose",
-    description: "905 Bridge. Vote with dollars. We order the outfit.",
+    title: "You found Billie!",
+    description: "Porch goose at 905 Bridge. Honk to dress her.",
     url: "https://chxgoose.com",
     images: [{ url: "/billie.jpg" }],
   },

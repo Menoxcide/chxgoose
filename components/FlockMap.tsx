@@ -61,14 +61,14 @@ export function FlockMap({ pins }: { pins: PublicPin[] }) {
               key={`${p.lat}-${p.lng}-${i}`}
               center={[p.lat, p.lng]}
               radius={8}
-              pathOptions={{ color: "#143029", fillColor: "#d63b12", fillOpacity: 0.95 }}
+              pathOptions={{ color: "#5c4033", fillColor: "#b85c38", fillOpacity: 0.95 }}
             />
           ))}
           {draft && (
             <CircleMarker
               center={[draft.lat, draft.lng]}
               radius={10}
-              pathOptions={{ color: "#e3b23c", fillColor: "#e3b23c", fillOpacity: 1 }}
+              pathOptions={{ color: "#a67c52", fillColor: "#c9a882", fillOpacity: 1 }}
             />
           )}
         </MapContainer>
