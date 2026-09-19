@@ -9,7 +9,7 @@ import {
 
 describe("allowlists", () => {
   it("has Amazon vote outfits and excludes the football default", () => {
-    expect(VOTE_OUTFIT_IDS).toHaveLength(6);
+    expect(VOTE_OUTFIT_IDS).toHaveLength(7);
     expect(isVoteOutfit(DEFAULT_OUTFIT)).toBe(false);
     expect(isVoteOutfit("hawaiian")).toBe(true);
   });

@@ -1,4 +1,5 @@
 export const VOTE_OUTFIT_IDS = [
+  "farmer",
   "scarecrow",
   "maple",
   "wizard",
@@ -23,6 +24,10 @@ export const OUTFIT_META: Record<OutfitId, OutfitMeta> = {
   football: {
     name: "Football",
     amazon: "https://www.amazon.com/dp/B0FVFL5Z6J",
+  },
+  farmer: {
+    name: "Harvest farmer",
+    amazon: "https://www.amazon.com/dp/B0H8GWBV17",
   },
   scarecrow: {
     name: "Fall scarecrow",
