@@ -1,8 +1,9 @@
 import { neon } from "@neondatabase/serverless";
 import { emptyPots, leader, type Pot } from "./race";
-import { DEFAULT_OUTFIT, isOutfit, isVoteOutfit, type OutfitId } from "./outfits";
+import { DEFAULT_OUTFIT, OUTFIT_META, isOutfit, isVoteOutfit, type OutfitId } from "./outfits";
 import { raceDate } from "./detroit";
 import { censorText } from "./censor";
+import type { DayStats } from "./digest";
 import type { GuestNote } from "./types";
 
 export function getSql() {
@@ -50,6 +51,12 @@ export async function ensureSchema() {
     note text NOT NULL,
     place text,
     created_at timestamptz NOT NULL DEFAULT now()
+  )`;
+  await sql`CREATE TABLE IF NOT EXISTS visits (
+    day date NOT NULL,
+    visitor_hash text NOT NULL,
+    hits int NOT NULL DEFAULT 1,
+    PRIMARY KEY (day, visitor_hash)
   )`;
 }
 
@@ -285,4 +292,55 @@ export async function markDressed(date: string) {
 
 export async function dressedFor(): Promise<string | null> {
   return readMeta("dressed_for");
+}
+
+export async function recordVisit(day: string, visitorHash: string) {
+  const sql = getSql();
+  if (!sql) return;
+  await sql`
+    INSERT INTO visits (day, visitor_hash, hits)
+    VALUES (${day}::date, ${visitorHash}, 1)
+    ON CONFLICT (day, visitor_hash) DO UPDATE SET hits = visits.hits + 1
+  `;
+}
+
+function emptyDayStats(date: string): DayStats {
+  return {
+    date,
+    people: 0,
+    visits: 0,
+    honks: 0,
+    honkCents: 0,
+    pins: 0,
+    notes: 0,
+    winning: null,
+  };
+}
+
+export async function readDayStats(day: string): Promise<DayStats> {
+  const sql = getSql();
+  if (!sql) return emptyDayStats(day);
+  const [visitRows, honkRows, pinRows, noteRows, pots] = await Promise.all([
+    sql`SELECT count(*)::int AS people, coalesce(sum(hits), 0)::int AS visits FROM visits WHERE day = ${day}::date`,
+    sql`SELECT count(*)::int AS n, coalesce(sum(amount_cents), 0)::int AS cents FROM honks WHERE race_date = ${day}::date`,
+    sql`SELECT count(*)::int AS n FROM pins WHERE (created_at AT TIME ZONE 'America/Detroit')::date = ${day}::date`,
+    sql`SELECT count(*)::int AS n FROM guestbook WHERE (created_at AT TIME ZONE 'America/Detroit')::date = ${day}::date`,
+    readLifetimePots(),
+  ]);
+  const hasLeader = pots.some((p) => p.amountCents > 0);
+  const win = hasLeader ? leader(pots) : null;
+  return {
+    date: day,
+    people: Number(visitRows[0]?.people ?? 0),
+    visits: Number(visitRows[0]?.visits ?? 0),
+    honks: Number(honkRows[0]?.n ?? 0),
+    honkCents: Number(honkRows[0]?.cents ?? 0),
+    pins: Number(pinRows[0]?.n ?? 0),
+    notes: Number(noteRows[0]?.n ?? 0),
+    winning: win ? OUTFIT_META[win].name : null,
+  };
+}
+
+export function digestMetaKey(day: string) {
+  return `digest_sms_${day}`;
 }

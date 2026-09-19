@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Alfa_Slab_One, IBM_Plex_Mono, Nunito } from "next/font/google";
+import { VisitPing } from "@/components/VisitPing";
 import "./globals.css";
 
 const display = Alfa_Slab_One({
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en">
       <body className={`${display.variable} ${body.variable} ${plex.variable}`}>
         {children}
+        <VisitPing />
       </body>
     </html>
   );

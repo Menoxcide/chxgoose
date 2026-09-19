@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dayOfYear, raceDate } from "./detroit";
+import { dayOfYear, previousRaceDate, raceDate } from "./detroit";
 
 describe("raceDate", () => {
   it("stays on the Detroit calendar date before midnight EDT", () => {
@@ -8,6 +8,16 @@ describe("raceDate", () => {
 
   it("rolls at midnight America/Detroit", () => {
     expect(raceDate(new Date("2026-09-19T04:00:00Z"))).toBe("2026-09-19");
+  });
+});
+
+describe("previousRaceDate", () => {
+  it("is the Detroit calendar day before now", () => {
+    expect(previousRaceDate(new Date("2026-09-19T16:00:00Z"))).toBe("2026-09-18");
+  });
+
+  it("crosses midnight in Detroit, not UTC", () => {
+    expect(previousRaceDate(new Date("2026-09-19T03:30:00Z"))).toBe("2026-09-17");
   });
 });
 
