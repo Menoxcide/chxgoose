@@ -1,4 +1,4 @@
-export const PIN_COOKIE = "billie_pin";
+export const PIN_COOKIE = "billie_pin_v2";
 
 export const PIN_COOKIE_OPTS = {
   httpOnly: true,
