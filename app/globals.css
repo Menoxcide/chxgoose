@@ -134,18 +134,36 @@ h1 {
 }
 
 .joke {
-  background: var(--cream) url("/ui/plaque.jpg") center / cover no-repeat;
+  background-color: var(--cream);
+  background-image:
+    linear-gradient(rgba(246, 234, 212, 0.2), rgba(246, 234, 212, 0.28)),
+    url("/ui/plaque.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   border: 3px solid var(--umber);
   padding: 1.35rem 1.25rem 1.4rem;
   margin: 1.6rem 0 1.8rem;
   box-shadow: 6px 6px 0 var(--tan);
 }
 
+.joke .eyebrow {
+  color: var(--umber);
+  text-shadow:
+    0 1px 0 var(--cream),
+    0 0 8px rgba(246, 234, 212, 0.9);
+}
+
 .punch {
   margin: 0.25rem 0 0;
   font-size: 1.22rem;
+  font-weight: 800;
   line-height: 1.45;
+  color: var(--ink);
   white-space: pre-wrap;
+  text-shadow:
+    0 1px 0 var(--cream),
+    0 0 10px rgba(246, 234, 212, 0.95);
 }
 
 h2 {
@@ -340,9 +358,25 @@ h2 {
 .book {
   margin: 2.2rem 0 1.4rem;
   padding: 1rem 0.9rem 1.1rem;
-  background: var(--cream) url("/ui/paper.jpg") center / cover no-repeat;
+  background-color: var(--cream);
+  background-image:
+    linear-gradient(rgba(246, 234, 212, 0.28), rgba(246, 234, 212, 0.36)),
+    url("/ui/paper.jpg");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   border: 3px solid var(--umber);
   box-shadow: 6px 6px 0 var(--tan);
+}
+
+.book h2 {
+  text-shadow: 0 1px 0 var(--cream);
+}
+
+.book .lede,
+.book .map-note {
+  color: var(--umber);
+  text-shadow: 0 1px 0 var(--cream);
 }
 
 .book-form {
@@ -383,13 +417,17 @@ h2 {
 .book-note {
   margin: 0 0 0.2rem;
   font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink);
+  text-shadow: 0 1px 0 var(--cream);
 }
 
 .book-by {
   margin: 0;
   font-family: var(--mono);
   font-size: 0.78rem;
-  color: var(--clay);
+  color: var(--umber);
+  text-shadow: 0 1px 0 var(--cream);
 }
 
 .pin-prompt {
