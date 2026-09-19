@@ -8,8 +8,8 @@ import {
 } from "./outfits";
 
 describe("allowlists", () => {
-  it("has five Amazon vote outfits and excludes the football default", () => {
-    expect(VOTE_OUTFIT_IDS).toHaveLength(5);
+  it("has Amazon vote outfits and excludes the football default", () => {
+    expect(VOTE_OUTFIT_IDS).toHaveLength(6);
     expect(isVoteOutfit(DEFAULT_OUTFIT)).toBe(false);
     expect(isVoteOutfit("hawaiian")).toBe(true);
   });
