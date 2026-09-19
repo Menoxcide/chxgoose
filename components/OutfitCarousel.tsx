@@ -1,48 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
 import { OUTFIT_META, VOTE_OUTFIT_IDS, type VoteOutfitId } from "@/lib/outfits";
 
 function dollars(cents: number) {
   return `$${(cents / 100).toFixed(0)}`;
-}
-
-function PhotoStrip({
-  images,
-  alt,
-}: {
-  images: string[];
-  alt: string;
-}) {
-  const [i, setI] = useState(0);
-  const scroller = useRef<HTMLDivElement>(null);
-
-  function onScroll() {
-    const el = scroller.current;
-    if (!el) return;
-    const n = Math.round(el.scrollLeft / Math.max(el.clientWidth, 1));
-    setI(Math.max(0, Math.min(images.length - 1, n)));
-  }
-
-  return (
-    <div className="photos-wrap">
-      <div
-        className="photos"
-        ref={scroller}
-        onScroll={onScroll}
-        aria-label={`${alt} photos`}
-      >
-        {images.map((src) => (
-          <img key={src} src={src} alt={alt} draggable={false} />
-        ))}
-      </div>
-      <div className="dots" aria-hidden>
-        {images.map((_, n) => (
-          <span key={n} className={n === i ? "dot on" : "dot"} />
-        ))}
-      </div>
-    </div>
-  );
 }
 
 export function OutfitCarousel({
@@ -64,7 +25,7 @@ export function OutfitCarousel({
         const meta = OUTFIT_META[id];
         return (
           <article key={id} className={id === winning ? "slide lead" : "slide"}>
-            <PhotoStrip images={meta.images} alt={meta.name} />
+            <img className="slide-photo" src={meta.image} alt={meta.name} draggable={false} />
             <div className="slide-meta">
               <div className="name">
                 {meta.name}

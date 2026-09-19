@@ -180,46 +180,12 @@ h2 {
   border-color: var(--rust);
 }
 
-.photos-wrap {
-  background: #fff;
-}
-
-.photos {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
-}
-
-.photos::-webkit-scrollbar {
-  height: 0;
-}
-
-.photos img {
-  flex: 0 0 100%;
+.slide-photo {
+  display: block;
   width: 100%;
   height: 280px;
   object-fit: contain;
   background: #fff;
-  scroll-snap-align: center;
-}
-
-.dots {
-  display: flex;
-  justify-content: center;
-  gap: 0.35rem;
-  padding: 0.4rem 0 0.55rem;
-}
-
-.dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 99px;
-  background: var(--tan);
-}
-
-.dot.on {
-  background: var(--rust);
 }
 
 .slide-meta {

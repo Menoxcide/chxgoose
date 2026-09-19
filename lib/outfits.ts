@@ -18,53 +18,49 @@ export type AmountCents = (typeof AMOUNTS)[number];
 export type OutfitMeta = {
   name: string;
   amazon: string;
-  images: string[];
+  image: string;
 };
-
-function shots(id: string): string[] {
-  return [0, 1, 2, 3, 4].map((n) => `/outfits/${id}/${n}.jpg`);
-}
 
 export const OUTFIT_META: Record<OutfitId, OutfitMeta> = {
   football: {
     name: "Football",
     amazon: "https://www.amazon.com/dp/B0FVFL5Z6J",
-    images: shots("football"),
+    image: "/outfits/football/0.jpg",
   },
   farmer: {
     name: "Harvest farmer",
     amazon: "https://www.amazon.com/dp/B0H8GWBV17",
-    images: shots("farmer"),
+    image: "/outfits/farmer/0.jpg",
   },
   scarecrow: {
     name: "Fall scarecrow",
     amazon: "https://www.amazon.com/dp/B0H36DD2NF",
-    images: shots("scarecrow"),
+    image: "/outfits/scarecrow/0.jpg",
   },
   maple: {
     name: "Maple leaf",
     amazon: "https://www.amazon.com/dp/B0HBP15VG2",
-    images: shots("maple"),
+    image: "/outfits/maple/0.jpg",
   },
   "maple-dress": {
     name: "Maple dress",
     amazon: "https://www.amazon.com/dp/B0H3YW591W",
-    images: shots("maple-dress"),
+    image: "/outfits/maple-dress/0.jpg",
   },
   leaves: {
     name: "Fall leaves",
     amazon: "https://www.amazon.com/dp/B0H83P8K38",
-    images: shots("leaves"),
+    image: "/outfits/leaves/0.jpg",
   },
   wizard: {
     name: "Halloween wizard",
     amazon: "https://www.amazon.com/dp/B0FFSQC6S5",
-    images: shots("wizard"),
+    image: "/outfits/wizard/0.jpg",
   },
   overalls: {
     name: "Blue overalls",
     amazon: "https://www.amazon.com/dp/B0GR4L5CRZ",
-    images: shots("overalls"),
+    image: "/outfits/overalls/0.jpg",
   },
 };
 

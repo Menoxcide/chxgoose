@@ -89,7 +89,7 @@ export function Porch({ state }: { state: PublicState }) {
         </p>
         {live.degraded && <p className="warn">Honks are offline.</p>}
         {error && <p className="warn">{error}</p>}
-        <p className="swipe-hint">Swipe for looks. Swipe a photo for more shots.</p>
+        <p className="swipe-hint">Swipe for looks</p>
         <OutfitCarousel
           winning={winning}
           potMap={potMap}
