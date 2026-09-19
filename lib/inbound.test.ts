@@ -1,6 +1,6 @@
 import { createHmac } from "crypto";
 import { describe, expect, it } from "vitest";
-import { receivedEmailId, verifySvix } from "./inbound";
+import { isGooseMail, receivedEmailId, verifySvix } from "./inbound";
 
 const secret = "whsec_" + Buffer.from("super-secret-key").toString("base64");
 const payload = '{"type":"email.received","data":{"email_id":"abc"}}';
@@ -40,5 +40,22 @@ describe("receivedEmailId", () => {
 
   it("ignores other events", () => {
     expect(receivedEmailId({ type: "email.sent", data: { email_id: "abc" } })).toBeNull();
+  });
+});
+
+describe("isGooseMail", () => {
+  it("accepts info@chxgoose.com", () => {
+    expect(
+      isGooseMail({ type: "email.received", data: { to: ["info@chxgoose.com"] } }),
+    ).toBe(true);
+  });
+
+  it("ignores mail for other domains on the same Resend account", () => {
+    expect(
+      isGooseMail({
+        type: "email.received",
+        data: { to: ["justin@justindkamen.com"], received_for: ["justin@justindkamen.com"] },
+      }),
+    ).toBe(false);
   });
 });

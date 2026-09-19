@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { INFO_EMAIL } from "@/lib/copy";
-import { alertInbox, mailFrom, receivedEmailId, verifySvix, type ReceivedEvent } from "@/lib/inbound";
+import {
+  alertInbox,
+  isGooseMail,
+  mailFrom,
+  receivedEmailId,
+  verifySvix,
+  type ReceivedEvent,
+} from "@/lib/inbound";
 import { noStore } from "@/lib/security";
 
 export async function POST(req: Request) {
@@ -26,7 +33,9 @@ export async function POST(req: Request) {
   }
 
   const emailId = receivedEmailId(event);
-  if (!emailId) return noStore(NextResponse.json({ ok: true, skipped: true }));
+  if (!emailId || !isGooseMail(event)) {
+    return noStore(NextResponse.json({ ok: true, skipped: true }));
+  }
 
   const to = alertInbox();
   const apiKey = process.env.RESEND_API_KEY?.trim();

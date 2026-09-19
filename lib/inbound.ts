@@ -9,6 +9,7 @@ export type ReceivedEvent = {
     email_id?: string;
     from?: string;
     to?: string[];
+    received_for?: string[];
     subject?: string;
   };
 };
@@ -47,4 +48,9 @@ export function receivedEmailId(event: ReceivedEvent): string | null {
   if (event.type !== "email.received") return null;
   const id = event.data?.email_id?.trim();
   return id || null;
+}
+
+export function isGooseMail(event: ReceivedEvent): boolean {
+  const addrs = [...(event.data?.to ?? []), ...(event.data?.received_for ?? [])];
+  return addrs.some((addr) => addr.toLowerCase().includes("@chxgoose.com"));
 }
