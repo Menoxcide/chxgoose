@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { insertGuest } from "@/lib/db";
+import { formatNoteSms, notifyOwner } from "@/lib/notify";
 import { BOOK_COOKIE, PIN_COOKIE_OPTS, hasBookCookie } from "@/lib/pin";
 import { censorText, isMostlyCensored } from "@/lib/censor";
 import {
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
   }
   try {
     await insertGuest(name, note, place);
+    notifyOwner(formatNoteSms(name, note, place));
     const res = NextResponse.json({ ok: true, alreadySigned: true, name, note, place });
     res.cookies.set(BOOK_COOKIE, "1", PIN_COOKIE_OPTS);
     return noStore(res);

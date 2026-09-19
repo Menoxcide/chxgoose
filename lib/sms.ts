@@ -6,8 +6,9 @@ export function e164(phone: string): string {
   throw new Error("bad phone");
 }
 
-export function verizonMmsEmail(phone: string): string {
-  return `${e164(phone).replace(/^\+1/, "")}@vzwpix.com`;
+export function attMmsEmail(phone: string): string {
+  const ten = e164(phone).replace(/^\+1/, "");
+  return `${ten}@mms.att.net`;
 }
 
 async function sendTwilio(phone: string, message: string): Promise<{ ok: true; via: string } | null> {
@@ -36,7 +37,10 @@ async function sendTwilio(phone: string, message: string): Promise<{ ok: true; v
 async function sendResendGateway(phone: string, message: string): Promise<{ ok: true; via: string } | null> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return null;
-  const to = process.env.ALERT_SMS_EMAIL?.trim() || verizonMmsEmail(phone);
+  const to = (process.env.ALERT_SMS_EMAIL?.trim() || attMmsEmail(phone))
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
   const from = process.env.RESEND_FROM?.trim() || "Billie <onboarding@justindkamen.com>";
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
@@ -44,7 +48,7 @@ async function sendResendGateway(phone: string, message: string): Promise<{ ok: 
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ from, to: [to], subject: "Billie", text: message }),
+    body: JSON.stringify({ from, to, subject: "Billie", text: message }),
   });
   if (!res.ok) throw new Error(`resend ${res.status}`);
   return { ok: true, via: "resend-mms" };

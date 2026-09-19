@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAmount, isVoteOutfit } from "@/lib/outfits";
 import { recordHonk } from "@/lib/db";
+import { formatHonkSms, notifyOwner } from "@/lib/notify";
 import { noStore } from "@/lib/security";
 import { verifyWebhook } from "@/lib/stripe";
 
@@ -36,6 +37,7 @@ export async function POST(req: Request) {
   if (!isVoteOutfit(outfitId) || amountCents == null || !isAmount(amountCents) || !race) {
     return noStore(NextResponse.json({ ok: true }));
   }
-  await recordHonk({ sessionId, raceDate: race, outfitId, amountCents });
+  const { inserted } = await recordHonk({ sessionId, raceDate: race, outfitId, amountCents });
+  if (inserted) notifyOwner(formatHonkSms(outfitId, amountCents));
   return noStore(NextResponse.json({ ok: true }));
 }

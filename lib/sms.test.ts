@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { e164, verizonMmsEmail } from "./sms";
+import { attMmsEmail, e164 } from "./sms";
 
 describe("e164", () => {
   it("formats a US 10-digit number", () => {
@@ -11,8 +11,8 @@ describe("e164", () => {
   });
 });
 
-describe("verizonMmsEmail", () => {
-  it("routes a US number through Verizon MMS", () => {
-    expect(verizonMmsEmail("2313732017")).toBe("2313732017@vzwpix.com");
+describe("attMmsEmail", () => {
+  it("routes a US number through AT&T MMS", () => {
+    expect(attMmsEmail("2313732017")).toBe("2313732017@mms.att.net");
   });
 });
