@@ -53,7 +53,8 @@ export function geocodeAttempts(q: string): URL[] {
 export async function geocodePlace(query: string): Promise<GeoHit | null> {
   const q = query.trim().slice(0, 80);
   if (q.length < 2) return null;
-  for (const url of geocodeAttempts(q)) {
+  const attempts = geocodeAttempts(q).slice(0, 2);
+  for (const url of attempts) {
     const res = await fetch(url, {
       headers: {
         Accept: "application/json",

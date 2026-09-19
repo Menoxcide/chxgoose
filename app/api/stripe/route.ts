@@ -1,31 +1,41 @@
 import { NextResponse } from "next/server";
 import { isAmount, isVoteOutfit } from "@/lib/outfits";
 import { recordHonk } from "@/lib/db";
+import { noStore } from "@/lib/security";
 import { verifyWebhook } from "@/lib/stripe";
 
 export async function POST(req: Request) {
   const raw = await req.text();
+  if (raw.length > 64_000) {
+    return noStore(NextResponse.json({ error: "bad signature" }, { status: 400 }));
+  }
   const sig = req.headers.get("stripe-signature");
   let event;
   try {
     event = verifyWebhook(raw, sig);
   } catch {
-    return NextResponse.json({ error: "bad signature" }, { status: 400 });
+    return noStore(NextResponse.json({ error: "bad signature" }, { status: 400 }));
   }
   if (!event) {
-    return NextResponse.json({ error: "bad signature" }, { status: 400 });
+    return noStore(NextResponse.json({ error: "bad signature" }, { status: 400 }));
   }
   if (event.type !== "checkout.session.completed") {
-    return NextResponse.json({ ok: true });
+    return noStore(NextResponse.json({ ok: true }));
   }
   const session = event.data.object;
+  if (session.payment_status !== "paid") {
+    return noStore(NextResponse.json({ ok: true }));
+  }
+  if (session.currency && session.currency !== "usd") {
+    return noStore(NextResponse.json({ ok: true }));
+  }
   const sessionId = session.id;
   const outfitId = session.metadata?.outfitId ?? "";
-  const amountCents = Number(session.metadata?.amountCents);
+  const amountCents = session.amount_total;
   const race = session.metadata?.raceDate ?? "";
-  if (!isVoteOutfit(outfitId) || !isAmount(amountCents) || !race) {
-    return NextResponse.json({ ok: true });
+  if (!isVoteOutfit(outfitId) || amountCents == null || !isAmount(amountCents) || !race) {
+    return noStore(NextResponse.json({ ok: true }));
   }
   await recordHonk({ sessionId, raceDate: race, outfitId, amountCents });
-  return NextResponse.json({ ok: true });
+  return noStore(NextResponse.json({ ok: true }));
 }

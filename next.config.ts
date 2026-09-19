@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
+import { SECURITY_HEADERS } from "./lib/security";
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   async redirects() {
     return [
       {
@@ -8,6 +10,14 @@ const nextConfig: NextConfig = {
         has: [{ type: "host", value: "www.chxgoose.com" }],
         destination: "https://chxgoose.com/:path*",
         permanent: true,
+      },
+    ];
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: Object.entries(SECURITY_HEADERS).map(([key, value]) => ({ key, value })),
       },
     ];
   },

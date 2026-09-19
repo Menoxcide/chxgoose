@@ -5,5 +5,7 @@ import { loadState } from "@/lib/state";
 export async function GET(req: Request) {
   const cookie = req.headers.get("cookie");
   const state = await loadState(new Date(), hasPinCookie(cookie), hasBookCookie(cookie));
-  return NextResponse.json(state);
+  const res = NextResponse.json(state);
+  res.headers.set("Cache-Control", "no-store");
+  return res;
 }

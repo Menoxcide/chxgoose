@@ -1,37 +1,47 @@
 import { NextResponse } from "next/server";
 import { insertGuest } from "@/lib/db";
 import { BOOK_COOKIE, PIN_COOKIE_OPTS, hasBookCookie } from "@/lib/pin";
-
-function clean(raw: unknown, max: number): string {
-  if (typeof raw !== "string") return "";
-  return raw.replace(/<[^>]*>/g, "").replace(/\s+/g, " ").trim().slice(0, max);
-}
+import {
+  cleanText,
+  clientIp,
+  ipHash,
+  isAllowedOrigin,
+  noStore,
+  rateLimit,
+  readJson,
+} from "@/lib/security";
 
 export async function POST(req: Request) {
+  if (!isAllowedOrigin(req)) {
+    return noStore(NextResponse.json({ error: "Couldn’t read that." }, { status: 403 }));
+  }
   if (hasBookCookie(req.headers.get("cookie"))) {
-    return NextResponse.json(
-      { error: "You already signed the book.", alreadySigned: true },
-      { status: 409 },
+    return noStore(
+      NextResponse.json({ error: "You already signed the book.", alreadySigned: true }, { status: 409 }),
     );
   }
-  let body: { name?: unknown; note?: unknown; place?: unknown };
-  try {
-    body = await req.json();
-  } catch {
-    return NextResponse.json({ error: "Couldn’t read that." }, { status: 400 });
+  if (!rateLimit(`book:${ipHash(clientIp(req))}`, 5, 60_000)) {
+    return noStore(NextResponse.json({ error: "Slow down a second." }, { status: 429 }));
   }
-  const name = clean(body.name, 40) || "A visitor";
-  const note = clean(body.note, 200);
-  const place = clean(body.place, 40) || null;
+  const body = await readJson<{ name?: unknown; note?: unknown; place?: unknown }>(req);
+  if (!body) {
+    return noStore(NextResponse.json({ error: "Couldn’t read that." }, { status: 400 }));
+  }
+  const name = cleanText(body.name, 40) || "A visitor";
+  const note = cleanText(body.note, 200);
+  const place = cleanText(body.place, 40) || null;
   if (note.length < 2) {
-    return NextResponse.json({ error: "Write a little note." }, { status: 400 });
+    return noStore(NextResponse.json({ error: "Write a little note." }, { status: 400 }));
+  }
+  if (/javascript:|data:text\/html/i.test(`${name} ${note} ${place ?? ""}`)) {
+    return noStore(NextResponse.json({ error: "Write a little note." }, { status: 400 }));
   }
   try {
     await insertGuest(name, note, place);
     const res = NextResponse.json({ ok: true, alreadySigned: true, name, note, place });
     res.cookies.set(BOOK_COOKIE, "1", PIN_COOKIE_OPTS);
-    return res;
+    return noStore(res);
   } catch {
-    return NextResponse.json({ error: "Couldn’t sign. Try again." }, { status: 503 });
+    return noStore(NextResponse.json({ error: "Couldn’t sign. Try again." }, { status: 503 }));
   }
 }
