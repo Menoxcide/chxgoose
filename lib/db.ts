@@ -153,13 +153,11 @@ export async function performRollover(now: Date = new Date()) {
   if (oldDate) {
     const pots = await readPots(oldDate);
     const win = leader(pots);
-    const wearing = win ?? (await readWearing());
     await sql`
       INSERT INTO races (race_date, winner_outfit_id, rolled_at)
       VALUES (${oldDate}::date, ${win}, now())
       ON CONFLICT (race_date) DO NOTHING
     `;
-    await writeMeta("wearing_outfit_id", wearing);
     await seedPotsIfMissing(today);
     for (const pot of pots) {
       if (pot.amountCents <= 0) continue;
