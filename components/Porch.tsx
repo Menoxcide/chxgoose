@@ -84,7 +84,7 @@ export function Porch({ state }: { state: PublicState }) {
   return (
     <>
       <section>
-        <h2>Dress Billie tomorrow</h2>
+        <h2>Dress Billie</h2>
         <p className="lede">
           Dollar votes. Highest pot gets ordered from Amazon and put on her.
           {winning
