@@ -2,6 +2,7 @@ import { neon } from "@neondatabase/serverless";
 import { emptyPots, leader, type Pot } from "./race";
 import { DEFAULT_OUTFIT, isOutfit, isVoteOutfit, type OutfitId } from "./outfits";
 import { raceDate } from "./detroit";
+import { censorText } from "./censor";
 import type { GuestNote } from "./types";
 
 export function getSql() {
@@ -272,9 +273,9 @@ export async function readGuestbook(): Promise<GuestNote[]> {
     LIMIT 80
   `;
   return rows.map((r) => ({
-    name: String(r.name),
-    note: String(r.note),
-    place: (r.place as string | null) ?? null,
+    name: censorText(String(r.name)) || "A visitor",
+    note: censorText(String(r.note)),
+    place: r.place ? censorText(String(r.place)) || null : null,
   }));
 }
 

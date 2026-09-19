@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { insertGuest } from "@/lib/db";
 import { BOOK_COOKIE, PIN_COOKIE_OPTS, hasBookCookie } from "@/lib/pin";
+import { censorText, isMostlyCensored } from "@/lib/censor";
 import {
   cleanText,
   clientIp,
@@ -27,11 +28,15 @@ export async function POST(req: Request) {
   if (!body) {
     return noStore(NextResponse.json({ error: "Couldn’t read that." }, { status: 400 }));
   }
-  const name = cleanText(body.name, 40) || "A visitor";
-  const note = cleanText(body.note, 200);
-  const place = cleanText(body.place, 40) || null;
-  if (note.length < 2) {
-    return noStore(NextResponse.json({ error: "Write a little note." }, { status: 400 }));
+  const name = censorText(cleanText(body.name, 40)) || "A visitor";
+  const note = censorText(cleanText(body.note, 200));
+  const placeRaw = censorText(cleanText(body.place, 40));
+  const place = placeRaw || null;
+  if (note.length < 2 || isMostlyCensored(note)) {
+    return noStore(NextResponse.json({ error: "Keep it kind. Try another note." }, { status: 400 }));
+  }
+  if (isMostlyCensored(name) || (place && isMostlyCensored(place))) {
+    return noStore(NextResponse.json({ error: "Keep it kind. Try another note." }, { status: 400 }));
   }
   if (/javascript:|data:text\/html/i.test(`${name} ${note} ${place ?? ""}`)) {
     return noStore(NextResponse.json({ error: "Write a little note." }, { status: 400 }));
