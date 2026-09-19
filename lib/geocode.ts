@@ -4,12 +4,79 @@ export type GeoHit = {
   label: string;
 };
 
+const STATE_ABBR: Record<string, string> = {
+  alabama: "AL",
+  alaska: "AK",
+  arizona: "AZ",
+  arkansas: "AR",
+  california: "CA",
+  colorado: "CO",
+  connecticut: "CT",
+  delaware: "DE",
+  florida: "FL",
+  georgia: "GA",
+  hawaii: "HI",
+  idaho: "ID",
+  illinois: "IL",
+  indiana: "IN",
+  iowa: "IA",
+  kansas: "KS",
+  kentucky: "KY",
+  louisiana: "LA",
+  maine: "ME",
+  maryland: "MD",
+  massachusetts: "MA",
+  michigan: "MI",
+  minnesota: "MN",
+  mississippi: "MS",
+  missouri: "MO",
+  montana: "MT",
+  nebraska: "NE",
+  nevada: "NV",
+  "new hampshire": "NH",
+  "new jersey": "NJ",
+  "new mexico": "NM",
+  "new york": "NY",
+  "north carolina": "NC",
+  "north dakota": "ND",
+  ohio: "OH",
+  oklahoma: "OK",
+  oregon: "OR",
+  pennsylvania: "PA",
+  "rhode island": "RI",
+  "south carolina": "SC",
+  "south dakota": "SD",
+  tennessee: "TN",
+  texas: "TX",
+  utah: "UT",
+  vermont: "VT",
+  virginia: "VA",
+  washington: "WA",
+  "west virginia": "WV",
+  wisconsin: "WI",
+  wyoming: "WY",
+};
+
+function tidyPart(part: string): string {
+  return part.replace(/\s+(charter township|township|county)$/i, "").trim();
+}
+
 export function labelFromNominatim(displayName: string, fallback: string): string {
   const parts = displayName
     .split(",")
     .map((s) => s.trim())
+    .filter(Boolean)
+    .filter((s) => !/^(united states|usa)$/i.test(s) && !/^\d{5}(-\d{4})?$/.test(s))
+    .map(tidyPart)
     .filter(Boolean);
-  const short = parts.slice(0, 2).join(", ") || fallback.trim();
+  const deduped: string[] = [];
+  for (const part of parts) {
+    if (deduped.at(-1)?.toLowerCase() !== part.toLowerCase()) deduped.push(part);
+  }
+  const stateIdx = deduped.findIndex((p) => STATE_ABBR[p.toLowerCase()]);
+  const place = deduped[0] || fallback.trim();
+  const state = stateIdx > 0 ? STATE_ABBR[deduped[stateIdx].toLowerCase()] : null;
+  const short = state && place ? `${place}, ${state}` : deduped.slice(0, 2).join(", ") || place;
   return short.slice(0, 40) || "Somewhere";
 }
 

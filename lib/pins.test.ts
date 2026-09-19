@@ -36,6 +36,20 @@ describe("clusterPins", () => {
     expect(clusterCaption(clusters.find((c) => /tucson/i.test(c.label))!)).toBe("85710, Tucson");
   });
 
+  it("counts 49720 with Charlevoix", () => {
+    const clusters = clusterPins([
+      { lat: 45.31198, lng: -85.25893, label: "Charlevoix, MI" },
+      { lat: 45.31723, lng: -85.25706, label: "Charlevoix, mi" },
+      { lat: 45.31198, lng: -85.2589, label: "Charlevoix" },
+      { lat: 45.29715, lng: -85.24111, label: "49720, Charlevoix Township" },
+      { lat: 45.20357, lng: -84.86113, label: "49713, Melrose Township" },
+    ]);
+    const chx = clusters.find((c) => /charlevoix/i.test(c.label) && !/melrose/i.test(c.label));
+    expect(chx?.count).toBe(4);
+    expect(clusterCaption(chx!)).toBe("Charlevoix, MI (4)");
+    expect(clusterCaption(clusters.find((c) => /melrose/i.test(c.label))!)).toBe("49713, Melrose Township");
+  });
+
   it("does not merge same city names in different regions", () => {
     const clusters = clusterPins([
       { lat: 45.52, lng: -122.68, label: "Portland, OR" },

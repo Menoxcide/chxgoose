@@ -8,12 +8,21 @@ export type PinCluster = {
 };
 
 function cityToken(label: string | null): string {
-  return (label ?? "").trim().toLowerCase().replace(/\s+/g, " ").split(",")[0] ?? "";
+  const parts = (label ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, " ")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (parts[0] && /^\d{5}(-\d{4})?$/.test(parts[0])) parts.shift();
+  const city = (parts[0] ?? "").replace(/\s+(charter township|township|county)$/i, "").trim();
+  return city;
 }
 
 function groupKey(p: PublicPin): string {
   const city = cityToken(p.label);
-  if (city) return `c:${city}:${p.lat.toFixed(1)},${p.lng.toFixed(1)}`;
+  if (city) return `c:${city}:${p.lat.toFixed(0)},${p.lng.toFixed(0)}`;
   return `g:${p.lat.toFixed(3)},${p.lng.toFixed(3)}`;
 }
 

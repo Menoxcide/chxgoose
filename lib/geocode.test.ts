@@ -5,7 +5,16 @@ describe("geocode", () => {
   it("shortens a Nominatim display name", () => {
     expect(
       labelFromNominatim("Charlevoix, Charlevoix County, Michigan, 49720, United States", "49720"),
-    ).toBe("Charlevoix, Charlevoix County");
+    ).toBe("Charlevoix, MI");
+  });
+
+  it("drops a leading ZIP so 49720 matches Charlevoix", () => {
+    expect(
+      labelFromNominatim(
+        "49720, Charlevoix Township, Charlevoix County, Michigan, United States",
+        "49720",
+      ),
+    ).toBe("Charlevoix, MI");
   });
 
   it("parses the first hit", () => {
@@ -15,7 +24,7 @@ describe("geocode", () => {
     );
     expect(hit?.lat).toBeCloseTo(45.318);
     expect(hit?.lng).toBeCloseTo(-85.258);
-    expect(hit?.label).toBe("Charlevoix, Michigan");
+    expect(hit?.label).toBe("Charlevoix, MI");
   });
 
   it("rejects empty results", () => {
