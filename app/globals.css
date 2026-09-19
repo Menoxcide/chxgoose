@@ -74,10 +74,6 @@ img {
   mix-blend-mode: multiply;
 }
 
-.basket.flip {
-  transform: scaleX(-1);
-}
-
 .eyebrow {
   font-family: var(--mono);
   font-size: 0.74rem;
