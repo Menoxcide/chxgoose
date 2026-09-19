@@ -1,4 +1,5 @@
 import Stripe from "stripe";
+import { HONK_CHECKOUT_NOTE } from "./copy";
 import { AMOUNT_META, OUTFIT_META, type AmountCents, type VoteOutfitId } from "./outfits";
 
 export function getStripe(): Stripe | null {
@@ -32,6 +33,9 @@ export async function createHonkSession(input: {
       outfitId: input.outfitId,
       amountCents: String(input.amountCents),
       raceDate: input.raceDate,
+    },
+    custom_text: {
+      submit: { message: HONK_CHECKOUT_NOTE },
     },
     line_items: [
       {

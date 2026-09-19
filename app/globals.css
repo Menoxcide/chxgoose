@@ -441,16 +441,40 @@ h2 {
 }
 
 .footer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1rem;
-  align-items: center;
-  justify-content: space-between;
   margin-top: 1.5rem;
   padding-top: 1rem;
   border-top: 3px dashed var(--tan);
   font-size: 0.95rem;
   color: var(--umber);
+}
+
+.footer-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.legal {
+  margin: 0.75rem 0 0;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--umber);
+}
+
+.legal a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.legal-page h1 {
+  font-size: 1.8rem;
+}
+
+.legal-page p {
+  max-width: 40em;
 }
 
 .share {

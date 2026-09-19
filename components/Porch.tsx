@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { HONK_FAIL } from "@/lib/copy";
+import { HONK_DISCLAIMER, HONK_FAIL } from "@/lib/copy";
 import {
   AMOUNT_META,
   AMOUNTS,
@@ -123,12 +123,18 @@ export function Porch({ state }: { state: PublicState }) {
       />
 
       <footer className="footer">
-        <p>
-          {live.honkCount} honks · 905 Bridge · outfits from Amazon
+        <div className="footer-bar">
+          <p>
+            {live.honkCount} honks · 905 Bridge · outfits from Amazon
+          </p>
+          <button className="share" type="button" onClick={share}>
+            Tell someone
+          </button>
+        </div>
+        <p className="legal">
+          {HONK_DISCLAIMER}{" "}
+          <a href="/terms">Full policy</a>
         </p>
-        <button className="share" type="button" onClick={share}>
-          Tell someone
-        </button>
       </footer>
 
       {pick && (
@@ -153,6 +159,10 @@ export function Porch({ state }: { state: PublicState }) {
                 </button>
               ))}
             </div>
+            <p className="legal">
+              {HONK_DISCLAIMER}{" "}
+              <a href="/terms">Full policy</a>
+            </p>
             <button className="ghost" type="button" onClick={() => setPick(null)}>
               Cancel
             </button>
