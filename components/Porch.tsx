@@ -7,19 +7,15 @@ import {
   AMOUNT_META,
   AMOUNTS,
   OUTFIT_META,
-  VOTE_OUTFIT_IDS,
   type AmountCents,
   type VoteOutfitId,
 } from "@/lib/outfits";
 import type { PublicState } from "@/lib/types";
+import { OutfitCarousel } from "./OutfitCarousel";
 
 const FlockMap = dynamic(() => import("./FlockMap").then((m) => m.FlockMap), {
   ssr: false,
 });
-
-function dollars(cents: number) {
-  return `$${(cents / 100).toFixed(0)}`;
-}
 
 export function Porch({ state }: { state: PublicState }) {
   const [live, setLive] = useState(state);
@@ -93,31 +89,14 @@ export function Porch({ state }: { state: PublicState }) {
         </p>
         {live.degraded && <p className="warn">Honks are offline.</p>}
         {error && <p className="warn">{error}</p>}
-        <ul className="order">
-          {VOTE_OUTFIT_IDS.map((id) => (
-            <li key={id} className={id === winning ? "row lead" : "row"}>
-              <span className="name">
-                {OUTFIT_META[id].name}
-                {id === winning ? <span className="lead-tag">winning</span> : null}
-                <a
-                  href={OUTFIT_META[id].amazon}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Amazon
-                </a>
-              </span>
-              <span className="pot">{dollars(potMap.get(id) ?? 0)}</span>
-              <button
-                className="honk"
-                disabled={live.degraded || busy}
-                onClick={() => setPick(id)}
-              >
-                Honk
-              </button>
-            </li>
-          ))}
-        </ul>
+        <p className="swipe-hint">Swipe for looks. Swipe a photo for more shots.</p>
+        <OutfitCarousel
+          winning={winning}
+          potMap={potMap}
+          degraded={live.degraded}
+          busy={busy}
+          onHonk={setPick}
+        />
       </section>
 
       <section className="map-block">
