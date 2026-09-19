@@ -23,8 +23,10 @@ export async function GET(req: Request) {
     const sent = await sendSms(text);
     await writeMeta(key, sent.via);
     return noStore(NextResponse.json({ ok: true, day, via: sent.via, stats }));
-  } catch {
-    return noStore(NextResponse.json({ ok: false }, { status: 503 }));
+  } catch (err) {
+    const error = err instanceof Error ? err.message : "digest failed";
+    console.error("digest", error);
+    return noStore(NextResponse.json({ ok: false, error }, { status: 503 }));
   }
 }
 
