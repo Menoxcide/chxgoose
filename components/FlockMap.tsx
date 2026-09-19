@@ -1,22 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CircleMarker, MapContainer, TileLayer, useMapEvents } from "react-leaflet";
+import { CircleMarker, MapContainer, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { PublicPin } from "@/lib/types";
-
-function ClickCatch({
-  onPick,
-}: {
-  onPick: (lat: number, lng: number) => void;
-}) {
-  useMapEvents({
-    click(e) {
-      onPick(e.latlng.lat, e.latlng.lng);
-    },
-  });
-  return null;
-}
 
 export function FlockMap({
   pins,
@@ -25,8 +12,7 @@ export function FlockMap({
   pins: PublicPin[];
   alreadyPinned: boolean;
 }) {
-  const [draft, setDraft] = useState<{ lat: number; lng: number } | null>(null);
-  const [label, setLabel] = useState("");
+  const [query, setQuery] = useState("");
   const [local, setLocal] = useState(pins);
   const [saving, setSaving] = useState(false);
   const [pinned, setPinned] = useState(alreadyPinned);
@@ -36,34 +22,61 @@ export function FlockMap({
   const canDrop = !pinned;
 
   async function drop() {
-    if (!draft || !canDrop) return;
+    if (!canDrop) return;
+    const q = query.trim();
+    if (q.length < 2) {
+      setNote("Type a city or postal code.");
+      return;
+    }
     setSaving(true);
     setNote(null);
-    const body = { lat: draft.lat, lng: draft.lng, label: label.trim() || undefined };
     const res = await fetch("/api/pin", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ query: q }),
     });
+    const data = await res.json().catch(() => ({}));
     setSaving(false);
     if (res.status === 409) {
       setPinned(true);
-      setDraft(null);
       setNote("You already dropped a pin.");
       return;
     }
     if (!res.ok) {
-      setNote("Pin didn’t stick. Try once more.");
+      setNote(typeof data.error === "string" ? data.error : "Couldn’t drop that pin.");
       return;
     }
-    setLocal((prev) => [{ lat: draft.lat, lng: draft.lng, label: label.trim() || null }, ...prev]);
-    setDraft(null);
-    setLabel("");
+    const lat = Number(data.lat);
+    const lng = Number(data.lng);
+    if (Number.isFinite(lat) && Number.isFinite(lng)) {
+      setLocal((prev) => [{ lat, lng, label: data.label ?? q }, ...prev]);
+    }
+    setQuery("");
     setPinned(true);
   }
 
   return (
     <>
+      {canDrop && (
+        <form
+          className="pin-prompt"
+          onSubmit={(e) => {
+            e.preventDefault();
+            drop();
+          }}
+        >
+          <input
+            maxLength={80}
+            placeholder="City or postal code"
+            value={query}
+            autoComplete="postal-code"
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <button className="honk" type="submit" disabled={saving}>
+            Drop pin
+          </button>
+        </form>
+      )}
       <div className="map">
         <MapContainer
           center={[44.5, -85.0]}
@@ -75,7 +88,6 @@ export function FlockMap({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {canDrop ? <ClickCatch onPick={(lat, lng) => setDraft({ lat, lng })} /> : null}
           {markers.map((p, i) => (
             <CircleMarker
               key={`${p.lat}-${p.lng}-${i}`}
@@ -84,32 +96,12 @@ export function FlockMap({
               pathOptions={{ color: "#5c4033", fillColor: "#b85c38", fillOpacity: 0.95 }}
             />
           ))}
-          {draft && canDrop && (
-            <CircleMarker
-              center={[draft.lat, draft.lng]}
-              radius={10}
-              pathOptions={{ color: "#a67c52", fillColor: "#c9a882", fillOpacity: 1 }}
-            />
-          )}
         </MapContainer>
       </div>
-      {draft && canDrop && (
-        <div className="pin-prompt">
-          <input
-            maxLength={40}
-            placeholder="Town (optional)"
-            value={label}
-            onChange={(e) => setLabel(e.target.value)}
-          />
-          <button className="honk" type="button" disabled={saving} onClick={drop}>
-            Drop pin
-          </button>
-        </div>
-      )}
       <p className="map-note">
         {pinned
           ? "You already dropped your pin. One per visitor."
-          : "Tap once. One pin per visitor."}
+          : "US ZIP, Canadian postal code, or any city. One pin per visitor."}
       </p>
       {note ? <p className="map-note">{note}</p> : null}
     </>

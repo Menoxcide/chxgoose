@@ -102,8 +102,8 @@ export function Porch({ state }: { state: PublicState }) {
       <section className="map-block">
         <h2>Where’d you honk from?</h2>
         <p className="lede">
-          Tap the map. Billie’s collecting hometowns
-          {live.flockCount ? ` — ${live.flockCount} so far.` : "."}
+          City or postal code — anywhere in the world.
+          {live.flockCount ? ` ${live.flockCount} in the flock.` : ""}
         </p>
         {live.degraded ? (
           <p className="warn">Map is offline.</p>
