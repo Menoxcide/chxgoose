@@ -70,10 +70,9 @@ async function sendTextbelt(phone: string, message: string): Promise<{ ok: true;
 export async function sendSms(message: string, to = process.env.ALERT_PHONE): Promise<{ ok: true; via: string }> {
   if (!to?.trim()) throw new Error("ALERT_PHONE missing");
   const phone = e164(to);
-  const sent =
-    (await sendTwilio(phone, message)) ||
-    (await sendResendGateway(phone, message)) ||
-    (await sendTextbelt(phone, message));
-  if (!sent) throw new Error("no sms provider");
-  return sent;
+  const twilio = await sendTwilio(phone, message);
+  if (twilio) return twilio;
+  const textbelt = await sendTextbelt(phone, message);
+  if (textbelt) return textbelt;
+  throw new Error("no sms provider");
 }
