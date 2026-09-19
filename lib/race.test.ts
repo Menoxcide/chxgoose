@@ -47,9 +47,9 @@ describe("rollover", () => {
   });
 
   it("puts the winner on Billie and resets pots", () => {
-    const pots = applyHonk(emptyPots(), "hawaiian", 2100, t1);
+    const pots = applyHonk(emptyPots(), "farmer", 2100, t1);
     const next = rollover(DEFAULT_OUTFIT, pots);
-    expect(next.wearing).toBe("hawaiian");
+    expect(next.wearing).toBe("farmer");
     expect(leader(next.pots)).toBeNull();
   });
 });

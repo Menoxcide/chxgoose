@@ -2,10 +2,10 @@ export const VOTE_OUTFIT_IDS = [
   "farmer",
   "scarecrow",
   "maple",
+  "maple-dress",
+  "leaves",
   "wizard",
-  "hawaiian",
   "overalls",
-  "swimsuit",
 ] as const;
 
 export type VoteOutfitId = (typeof VOTE_OUTFIT_IDS)[number];
@@ -37,21 +37,21 @@ export const OUTFIT_META: Record<OutfitId, OutfitMeta> = {
     name: "Maple leaf",
     amazon: "https://www.amazon.com/dp/B0HBP15VG2",
   },
+  "maple-dress": {
+    name: "Maple dress",
+    amazon: "https://www.amazon.com/dp/B0H3YW591W",
+  },
+  leaves: {
+    name: "Fall leaves",
+    amazon: "https://www.amazon.com/dp/B0H83P8K38",
+  },
   wizard: {
     name: "Halloween wizard",
     amazon: "https://www.amazon.com/dp/B0FFSQC6S5",
   },
-  hawaiian: {
-    name: "Hawaiian",
-    amazon: "https://www.amazon.com/dp/B0F4R7TRFY",
-  },
   overalls: {
     name: "Blue overalls",
     amazon: "https://www.amazon.com/dp/B0GR4L5CRZ",
-  },
-  swimsuit: {
-    name: "Bikini set",
-    amazon: "https://www.amazon.com/dp/B0GRT799MX",
   },
 };
 
