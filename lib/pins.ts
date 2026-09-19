@@ -7,10 +7,32 @@ export type PinCluster = {
   count: number;
 };
 
+function cityToken(label: string | null): string {
+  return (label ?? "").trim().toLowerCase().replace(/\s+/g, " ").split(",")[0] ?? "";
+}
+
 function groupKey(p: PublicPin): string {
-  const name = p.label?.trim().toLowerCase().replace(/\s+/g, " ");
-  if (name) return `n:${name}`;
+  const city = cityToken(p.label);
+  if (city) return `c:${city}:${p.lat.toFixed(1)},${p.lng.toFixed(1)}`;
   return `g:${p.lat.toFixed(3)},${p.lng.toFixed(3)}`;
+}
+
+function prettyLabel(s: string): string {
+  return s.replace(/,\s*([A-Za-z]{2})$/, (_, st: string) => `, ${st.toUpperCase()}`);
+}
+
+function pickLabel(group: PublicPin[]): string {
+  const names = group.map((p) => p.label?.trim()).filter((s): s is string => Boolean(s));
+  if (names.length === 0) return "Here";
+  names.sort((a, b) => {
+    const state = (s: string) => (/,\s*[A-Za-z]{2}$/.test(s) ? 1 : 0);
+    if (state(b) !== state(a)) return state(b) - state(a);
+    const commas = (s: string) => (s.match(/,/g) ?? []).length;
+    if (commas(b) !== commas(a)) return commas(b) - commas(a);
+    if (b.length !== a.length) return b.length - a.length;
+    return a.localeCompare(b);
+  });
+  return prettyLabel(names[0]);
 }
 
 export function clusterPins(pins: PublicPin[]): PinCluster[] {
@@ -24,8 +46,7 @@ export function clusterPins(pins: PublicPin[]): PinCluster[] {
   return [...groups.values()].map((group) => {
     const lat = group.reduce((s, p) => s + p.lat, 0) / group.length;
     const lng = group.reduce((s, p) => s + p.lng, 0) / group.length;
-    const label = group.find((p) => p.label?.trim())?.label?.trim() || "Here";
-    return { lat, lng, label, count: group.length };
+    return { lat, lng, label: pickLabel(group), count: group.length };
   });
 }
 
