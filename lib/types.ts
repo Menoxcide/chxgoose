@@ -11,6 +11,12 @@ export type PublicPin = {
   label: string | null;
 };
 
+export type GuestNote = {
+  name: string;
+  note: string;
+  place: string | null;
+};
+
 export type PublicState = {
   wearing: OutfitId;
   winning: VoteOutfitId | null;
@@ -23,4 +29,6 @@ export type PublicState = {
   dressedToday: boolean;
   degraded: boolean;
   alreadyPinned: boolean;
+  alreadySigned: boolean;
+  guestbook: GuestNote[];
 };

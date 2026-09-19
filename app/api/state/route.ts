@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
-import { hasPinCookie } from "@/lib/pin";
+import { hasBookCookie, hasPinCookie } from "@/lib/pin";
 import { loadState } from "@/lib/state";
 
 export async function GET(req: Request) {
-  const state = await loadState(new Date(), hasPinCookie(req.headers.get("cookie")));
+  const cookie = req.headers.get("cookie");
+  const state = await loadState(new Date(), hasPinCookie(cookie), hasBookCookie(cookie));
   return NextResponse.json(state);
 }

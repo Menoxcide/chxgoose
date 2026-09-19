@@ -12,6 +12,7 @@ import {
 } from "@/lib/outfits";
 import type { PublicState } from "@/lib/types";
 import { OutfitCarousel } from "./OutfitCarousel";
+import { GuestBook } from "./GuestBook";
 
 const FlockMap = dynamic(() => import("./FlockMap").then((m) => m.FlockMap), {
   ssr: false,
@@ -111,6 +112,12 @@ export function Porch({ state }: { state: PublicState }) {
           <FlockMap pins={live.pins} alreadyPinned={live.alreadyPinned} />
         )}
       </section>
+
+      <GuestBook
+        entries={live.guestbook}
+        alreadySigned={live.alreadySigned}
+        degraded={live.degraded}
+      />
 
       <footer className="footer">
         <p>

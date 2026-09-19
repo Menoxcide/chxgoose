@@ -2,7 +2,7 @@ import { existsSync } from "fs";
 import { join } from "path";
 import { cookies } from "next/headers";
 import { OUTFIT_META, isOutfit } from "@/lib/outfits";
-import { PIN_COOKIE } from "@/lib/pin";
+import { BOOK_COOKIE, PIN_COOKIE } from "@/lib/pin";
 import { loadState } from "@/lib/state";
 import { Porch } from "@/components/Porch";
 
@@ -10,7 +10,11 @@ export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const jar = await cookies();
-  const state = await loadState(new Date(), jar.get(PIN_COOKIE)?.value === "1");
+  const state = await loadState(
+    new Date(),
+    jar.get(PIN_COOKIE)?.value === "1",
+    jar.get(BOOK_COOKIE)?.value === "1",
+  );
   const wearing = isOutfit(state.wearing) ? state.wearing : "football";
   const look = OUTFIT_META[wearing];
   const photo = existsSync(join(process.cwd(), "public", "billie.jpg"));

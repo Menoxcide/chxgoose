@@ -9,6 +9,7 @@ import {
   flockCount,
   getSql,
   performRollover,
+  readGuestbook,
   readHonkCount,
   readLifetimePots,
   readPins,
@@ -19,6 +20,7 @@ import {
 export function staticState(
   now: Date = new Date(),
   alreadyPinned = false,
+  alreadySigned = false,
 ): PublicState {
   const today = raceDate(now);
   return {
@@ -33,20 +35,23 @@ export function staticState(
     dressedToday: false,
     degraded: true,
     alreadyPinned,
+    alreadySigned,
+    guestbook: [],
   };
 }
 
 export async function loadState(
   now: Date = new Date(),
   alreadyPinned = false,
+  alreadySigned = false,
 ): Promise<PublicState> {
-  if (!getSql()) return staticState(now, alreadyPinned);
+  if (!getSql()) return staticState(now, alreadyPinned, alreadySigned);
   try {
     await ensureSchema();
     await performRollover(now);
     const today = raceDate(now);
     await seedPotsIfMissing(today);
-    const [pots, wearing, honkCount, pins, flock, dressed, joke] = await Promise.all([
+    const [pots, wearing, honkCount, pins, flock, dressed, joke, guestbook] = await Promise.all([
       readLifetimePots(),
       readWearing(),
       readHonkCount(),
@@ -54,6 +59,7 @@ export async function loadState(
       flockCount(),
       dressedFor(),
       dailyJoke(now),
+      readGuestbook(),
     ]);
     return {
       wearing,
@@ -67,8 +73,10 @@ export async function loadState(
       dressedToday: dressed === today,
       degraded: false,
       alreadyPinned,
+      alreadySigned,
+      guestbook,
     };
   } catch {
-    return staticState(now, alreadyPinned);
+    return staticState(now, alreadyPinned, alreadySigned);
   }
 }

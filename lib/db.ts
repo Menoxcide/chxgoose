@@ -2,6 +2,7 @@ import { neon } from "@neondatabase/serverless";
 import { emptyPots, leader, type Pot } from "./race";
 import { DEFAULT_OUTFIT, isOutfit, isVoteOutfit, type OutfitId } from "./outfits";
 import { raceDate } from "./detroit";
+import type { GuestNote } from "./types";
 
 export function getSql() {
   const url = process.env.DATABASE_URL;
@@ -41,6 +42,13 @@ export async function ensureSchema() {
   await sql`CREATE TABLE IF NOT EXISTS meta (
     key text PRIMARY KEY,
     value text
+  )`;
+  await sql`CREATE TABLE IF NOT EXISTS guestbook (
+    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name text NOT NULL,
+    note text NOT NULL,
+    place text,
+    created_at timestamptz NOT NULL DEFAULT now()
   )`;
 }
 
@@ -246,6 +254,30 @@ export async function flockCount() {
   if (!sql) return 0;
   const rows = await sql`SELECT count(*)::int AS n FROM pins`;
   return Number(rows[0]?.n ?? 0);
+}
+
+export async function insertGuest(name: string, note: string, place: string | null) {
+  const sql = getSql();
+  if (!sql) throw new Error("no db");
+  await sql`
+    INSERT INTO guestbook (name, note, place) VALUES (${name}, ${note}, ${place})
+  `;
+}
+
+export async function readGuestbook(): Promise<GuestNote[]> {
+  const sql = getSql();
+  if (!sql) return [];
+  const rows = await sql`
+    SELECT name, note, place
+    FROM guestbook
+    ORDER BY created_at DESC
+    LIMIT 80
+  `;
+  return rows.map((r) => ({
+    name: String(r.name),
+    note: String(r.note),
+    place: (r.place as string | null) ?? null,
+  }));
 }
 
 export async function markDressed(date: string) {

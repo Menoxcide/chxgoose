@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { CircleMarker, MapContainer, TileLayer } from "react-leaflet";
+import { CircleMarker, MapContainer, TileLayer, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import type { PublicPin } from "@/lib/types";
 
@@ -19,6 +19,18 @@ export function FlockMap({
   const [note, setNote] = useState<string | null>(null);
 
   const markers = useMemo(() => local, [local]);
+  const towns = useMemo(() => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const p of local) {
+      const t = p.label?.trim();
+      if (t && !seen.has(t)) {
+        seen.add(t);
+        out.push(t);
+      }
+    }
+    return out;
+  }, [local]);
   const canDrop = !pinned;
 
   async function drop() {
@@ -94,7 +106,13 @@ export function FlockMap({
               center={[p.lat, p.lng]}
               radius={8}
               pathOptions={{ color: "#5c4033", fillColor: "#b85c38", fillOpacity: 0.95 }}
-            />
+            >
+              {p.label ? (
+                <Tooltip permanent direction="top" offset={[0, -10]} className="town-label">
+                  {p.label}
+                </Tooltip>
+              ) : null}
+            </CircleMarker>
           ))}
         </MapContainer>
       </div>
@@ -104,6 +122,7 @@ export function FlockMap({
           : "US ZIP, Canadian postal code, or any city. One pin per visitor."}
       </p>
       {note ? <p className="map-note">{note}</p> : null}
+      {towns.length > 0 ? <p className="town-list">{towns.join(" · ")}</p> : null}
     </>
   );
 }
