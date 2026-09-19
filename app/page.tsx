@@ -22,6 +22,10 @@ export default async function Home() {
   return (
     <main className="porch">
       <header className="hero">
+        <div className="baskets" aria-hidden="true">
+          <img src="/ui/basket.jpg" alt="" className="basket" />
+          <img src="/ui/basket.jpg" alt="" className="basket flip" />
+        </div>
         <p className="eyebrow">905 Bridge · porch goose</p>
         <h1>You found Billie!</h1>
         <p className="sub">

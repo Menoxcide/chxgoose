@@ -101,7 +101,10 @@ export function Porch({ state }: { state: PublicState }) {
       </section>
 
       <section className="map-block">
-        <h2>Where’d you honk from?</h2>
+        <h2 className="with-mark">
+          <img src="/ui/pin.jpg" alt="" />
+          Where’d you honk from?
+        </h2>
         <p className="lede">
           City or postal code — anywhere in the world.
           {live.flockCount ? ` ${live.flockCount} in the flock.` : ""}
@@ -159,7 +162,10 @@ export function Porch({ state }: { state: PublicState }) {
 
       {honked && (
         <div className="overlay" onClick={() => setHonked(false)} role="status">
-          <div className="overlay-card">Honk! Billie felt that.</div>
+          <div className="overlay-card">
+            <img src="/ui/stamp.jpg" alt="" />
+            Honk! Billie felt that.
+          </div>
         </div>
       )}
     </>

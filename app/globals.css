@@ -27,13 +27,12 @@ body {
 }
 
 body {
+  background-color: var(--sand);
   background-image:
-    radial-gradient(900px 420px at 50% -80px, #f3e4c4 0%, transparent 70%),
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 22px,
-      rgba(92, 64, 51, 0.04) 22px 23px
-    );
+    linear-gradient(rgba(232, 215, 184, 0.72), rgba(232, 215, 184, 0.78)),
+    url("/ui/wood.jpg");
+  background-size: auto, 420px;
+  background-repeat: repeat;
 }
 
 a {
@@ -58,6 +57,25 @@ img {
 
 .hero {
   text-align: center;
+  position: relative;
+}
+
+.baskets {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  pointer-events: none;
+  margin: 0 -0.4rem 0.2rem;
+}
+
+.basket {
+  width: 28%;
+  max-width: 140px;
+  mix-blend-mode: multiply;
+}
+
+.basket.flip {
+  transform: scaleX(-1);
 }
 
 .eyebrow {
@@ -116,9 +134,9 @@ h1 {
 }
 
 .joke {
-  background: var(--cream);
+  background: var(--cream) url("/ui/plaque.jpg") center / cover no-repeat;
   border: 3px solid var(--umber);
-  padding: 1rem 1.1rem 1.15rem;
+  padding: 1.35rem 1.25rem 1.4rem;
   margin: 1.6rem 0 1.8rem;
   box-shadow: 6px 6px 0 var(--tan);
 }
@@ -136,6 +154,19 @@ h2 {
   font-size: 1.55rem;
   margin: 0 0 0.3rem;
   color: var(--umber);
+}
+
+.with-mark {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.with-mark img {
+  width: 2.1rem;
+  height: 2.1rem;
+  object-fit: contain;
+  mix-blend-mode: multiply;
 }
 
 .lede {
@@ -308,6 +339,10 @@ h2 {
 
 .book {
   margin: 2.2rem 0 1.4rem;
+  padding: 1rem 0.9rem 1.1rem;
+  background: var(--cream) url("/ui/paper.jpg") center / cover no-repeat;
+  border: 3px solid var(--umber);
+  box-shadow: 6px 6px 0 var(--tan);
 }
 
 .book-form {
@@ -464,16 +499,25 @@ h2 {
 }
 
 .overlay-card {
-  background: var(--rust);
-  color: var(--cream);
+  background: var(--cream);
+  color: var(--umber);
   border: 4px solid var(--umber);
-  padding: 1.3rem 1.15rem;
+  padding: 1rem 1.15rem 1.2rem;
   font-family: var(--display);
-  font-size: 1.55rem;
+  font-size: 1.45rem;
   text-align: center;
   max-width: 18rem;
   transform: rotate(-2deg);
   animation: pop 0.35s ease-out;
+}
+
+.overlay-card img {
+  display: block;
+  width: 5.5rem;
+  height: 5.5rem;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+  margin: 0 auto 0.4rem;
 }
 
 .warn {
@@ -492,6 +536,12 @@ h2 {
   to {
     transform: scale(1) rotate(-2deg);
     opacity: 1;
+  }
+}
+
+@media (max-width: 520px) {
+  .basket {
+    width: 22%;
   }
 }
 
