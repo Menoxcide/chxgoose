@@ -25,6 +25,7 @@ export type PublicState = {
   honkCount: number;
   flockCount: number;
   joke: string;
+  jokeKind: "dad" | "mom";
   raceDate: string;
   dressedToday: boolean;
   degraded: boolean;

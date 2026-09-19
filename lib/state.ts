@@ -1,5 +1,5 @@
 import { raceDate } from "./detroit";
-import { dailyJoke, jokeOfTheDay } from "./jokes";
+import { dailyJoke, jokeKindFor, jokeOfTheDay } from "./jokes";
 import { DEFAULT_OUTFIT } from "./outfits";
 import { leader } from "./race";
 import type { PublicState } from "./types";
@@ -31,6 +31,7 @@ export function staticState(
     honkCount: 0,
     flockCount: 0,
     joke: jokeOfTheDay(now),
+    jokeKind: jokeKindFor(now),
     raceDate: today,
     dressedToday: false,
     degraded: true,
@@ -51,7 +52,7 @@ export async function loadState(
     await performRollover(now);
     const today = raceDate(now);
     await seedPotsIfMissing(today);
-    const [pots, wearing, honkCount, pins, flock, dressed, joke, guestbook] = await Promise.all([
+    const [pots, wearing, honkCount, pins, flock, dressed, daily, guestbook] = await Promise.all([
       readLifetimePots(),
       readWearing(),
       readHonkCount(),
@@ -68,7 +69,8 @@ export async function loadState(
       pins,
       honkCount,
       flockCount: flock,
-      joke,
+      joke: daily.text,
+      jokeKind: daily.kind,
       raceDate: today,
       dressedToday: dressed === today,
       degraded: false,

@@ -38,7 +38,9 @@ export default async function Home() {
       </header>
 
       <section className="joke" aria-label="Joke of the day">
-        <p className="eyebrow">Joke of the day</p>
+        <p className="eyebrow">
+          {state.jokeKind === "mom" ? "Mom joke of the day" : "Dad joke of the day"}
+        </p>
         <p className="punch">{state.joke}</p>
       </section>
 
