@@ -30,10 +30,20 @@ function prettyLabel(s: string): string {
   return s.replace(/,\s*([A-Za-z]{2})$/, (_, st: string) => `, ${st.toUpperCase()}`);
 }
 
+function zipOf(s: string): string | null {
+  return s.match(/\b(\d{5})\b/)?.[1] ?? null;
+}
+
+function stripZip(s: string): string {
+  return s.replace(/^\d{5}(?:-\d{4})?\s*,\s*/, "").trim();
+}
+
 function pickLabel(group: PublicPin[]): string {
   const names = group.map((p) => p.label?.trim()).filter((s): s is string => Boolean(s));
   if (names.length === 0) return "Here";
-  names.sort((a, b) => {
+  const zip = names.map(zipOf).find(Boolean) ?? null;
+  const places = names.map(stripZip).filter(Boolean);
+  places.sort((a, b) => {
     const state = (s: string) => (/,\s*[A-Za-z]{2}$/.test(s) ? 1 : 0);
     if (state(b) !== state(a)) return state(b) - state(a);
     const commas = (s: string) => (s.match(/,/g) ?? []).length;
@@ -41,7 +51,9 @@ function pickLabel(group: PublicPin[]): string {
     if (b.length !== a.length) return b.length - a.length;
     return a.localeCompare(b);
   });
-  return prettyLabel(names[0]);
+  const place = prettyLabel(places[0] || "Here");
+  if (zip && !place.startsWith(zip)) return prettyLabel(`${zip}, ${place}`);
+  return place;
 }
 
 export function clusterPins(pins: PublicPin[]): PinCluster[] {

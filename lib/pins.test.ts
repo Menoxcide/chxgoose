@@ -46,7 +46,7 @@ describe("clusterPins", () => {
     ]);
     const chx = clusters.find((c) => /charlevoix/i.test(c.label) && !/melrose/i.test(c.label));
     expect(chx?.count).toBe(4);
-    expect(clusterCaption(chx!)).toBe("Charlevoix, MI (4)");
+    expect(clusterCaption(chx!)).toBe("49720, Charlevoix, MI (4)");
     expect(clusterCaption(clusters.find((c) => /melrose/i.test(c.label))!)).toBe("49713, Melrose Township");
   });
 

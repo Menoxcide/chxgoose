@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { insertPin } from "@/lib/db";
 import { formatPinSms, notifyOwner } from "@/lib/notify";
-import { geocodePlace } from "@/lib/geocode";
+import { fillPlaceDetails, geocodePlace } from "@/lib/geocode";
 import { PIN_COOKIE, PIN_COOKIE_OPTS, hasPinCookie } from "@/lib/pin";
 import {
   clientIp,
@@ -43,14 +43,15 @@ export async function POST(req: Request) {
         ),
       );
     }
-    await insertPin(hit.lat, hit.lng, hit.label);
-    notifyOwner(formatPinSms(hit.label));
+    const label = fillPlaceDetails(query, hit);
+    await insertPin(hit.lat, hit.lng, label);
+    notifyOwner(formatPinSms(label));
     const res = NextResponse.json({
       ok: true,
       alreadyPinned: true,
       lat: hit.lat,
       lng: hit.lng,
-      label: hit.label,
+      label,
     });
     res.cookies.set(PIN_COOKIE, "1", PIN_COOKIE_OPTS);
     return noStore(res);

@@ -3,11 +3,13 @@ import { insertGuest } from "@/lib/db";
 import { formatNoteSms, notifyOwner } from "@/lib/notify";
 import { BOOK_COOKIE, PIN_COOKIE_OPTS, hasBookCookie } from "@/lib/pin";
 import { censorText, isMostlyCensored } from "@/lib/censor";
+import { fillPlaceDetails, geocodePlace } from "@/lib/geocode";
 import {
   cleanText,
   clientIp,
   ipHash,
   isAllowedOrigin,
+  looksLikePlaceQuery,
   noStore,
   rateLimit,
   readJson,
@@ -32,7 +34,15 @@ export async function POST(req: Request) {
   const name = censorText(cleanText(body.name, 40)) || "A visitor";
   const note = censorText(cleanText(body.note, 200));
   const placeRaw = censorText(cleanText(body.place, 40));
-  const place = placeRaw || null;
+  let place = placeRaw || null;
+  if (place && looksLikePlaceQuery(place)) {
+    try {
+      const hit = await geocodePlace(place);
+      if (hit) place = fillPlaceDetails(place, hit).slice(0, 40);
+    } catch {
+      /* keep the typed place */
+    }
+  }
   if (note.length < 2 || isMostlyCensored(note)) {
     return noStore(NextResponse.json({ error: "Keep it kind. Try another note." }, { status: 400 }));
   }
