@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { CircleMarker, MapContainer, TileLayer, Tooltip } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+import { clusterCaption, clusterPins } from "@/lib/pins";
 import type { PublicPin } from "@/lib/types";
 
 export function FlockMap({
@@ -18,19 +19,8 @@ export function FlockMap({
   const [pinned, setPinned] = useState(alreadyPinned);
   const [note, setNote] = useState<string | null>(null);
 
-  const markers = useMemo(() => local, [local]);
-  const towns = useMemo(() => {
-    const seen = new Set<string>();
-    const out: string[] = [];
-    for (const p of local) {
-      const t = p.label?.trim();
-      if (t && !seen.has(t)) {
-        seen.add(t);
-        out.push(t);
-      }
-    }
-    return out;
-  }, [local]);
+  const clusters = useMemo(() => clusterPins(local), [local]);
+  const towns = useMemo(() => clusters.map(clusterCaption), [clusters]);
   const canDrop = !pinned;
 
   async function drop() {
@@ -100,18 +90,16 @@ export function FlockMap({
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          {markers.map((p, i) => (
+          {clusters.map((c) => (
             <CircleMarker
-              key={`${p.lat}-${p.lng}-${i}`}
-              center={[p.lat, p.lng]}
-              radius={8}
+              key={`${c.label}-${c.lat}-${c.lng}`}
+              center={[c.lat, c.lng]}
+              radius={Math.min(16, 7 + c.count)}
               pathOptions={{ color: "#5c4033", fillColor: "#b85c38", fillOpacity: 0.95 }}
             >
-              {p.label ? (
-                <Tooltip permanent direction="top" offset={[0, -10]} className="town-label">
-                  {p.label}
-                </Tooltip>
-              ) : null}
+              <Tooltip permanent direction="top" offset={[0, -10]} className="town-label">
+                {clusterCaption(c)}
+              </Tooltip>
             </CircleMarker>
           ))}
         </MapContainer>
