@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
+import { INFO_EMAIL } from "@/lib/copy";
 
 export const metadata: Metadata = {
   title: "Honks, gifts, and no refunds — chxgoose",
@@ -33,7 +34,7 @@ export default function TermsPage() {
       </p>
       <p>
         Questions:{" "}
-        <a href="mailto:meghan.dishaw905@gmail.com">meghan.dishaw905@gmail.com</a>
+        <a href={`mailto:${INFO_EMAIL}`}>{INFO_EMAIL}</a>
       </p>
       <p>
         <Link href="/">Back to Billie</Link>

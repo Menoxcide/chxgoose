@@ -5,3 +5,5 @@ export const HONK_DISCLAIMER =
 
 export const HONK_CHECKOUT_NOTE =
   "Honks are voluntary gifts toward Billie’s outfit. Not tax-deductible. All honks are final — no refunds.";
+
+export const INFO_EMAIL = "info@chxgoose.com";
