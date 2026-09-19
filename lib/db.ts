@@ -109,6 +109,31 @@ export async function seedPotsIfMissing(date: string) {
   }
 }
 
+export async function readLifetimePots(): Promise<Pot[]> {
+  const sql = getSql();
+  if (!sql) return emptyPots();
+  const rows = await sql`
+    SELECT outfit_id, SUM(amount_cents)::int AS amount_cents, MIN(created_at) AS first_honk
+    FROM honks
+    GROUP BY outfit_id
+  `;
+  const byId = new Map(
+    rows.map((r) => [
+      String(r.outfit_id),
+      {
+        amountCents: Number(r.amount_cents) || 0,
+        leadingSince: r.first_honk ? new Date(r.first_honk as string).toISOString() : null,
+      },
+    ]),
+  );
+  return emptyPots().map((p) => {
+    const hit = byId.get(p.outfitId);
+    return hit
+      ? { outfitId: p.outfitId, amountCents: hit.amountCents, leadingSince: hit.leadingSince }
+      : p;
+  });
+}
+
 export async function performRollover(now: Date = new Date()) {
   const sql = getSql();
   if (!sql) return { did: false as const };
@@ -127,10 +152,21 @@ export async function performRollover(now: Date = new Date()) {
       ON CONFLICT (race_date) DO NOTHING
     `;
     await writeMeta("wearing_outfit_id", wearing);
+    await seedPotsIfMissing(today);
+    for (const pot of pots) {
+      if (pot.amountCents <= 0) continue;
+      await sql`
+        UPDATE pots
+        SET amount_cents = ${pot.amountCents},
+            leading_since = ${pot.leadingSince}
+        WHERE race_date = ${today}::date AND outfit_id = ${pot.outfitId}
+      `;
+    }
+  } else {
+    await seedPotsIfMissing(today);
   }
 
   await writeMeta("race_date", today);
-  await seedPotsIfMissing(today);
   return { did: true as const, today };
 }
 

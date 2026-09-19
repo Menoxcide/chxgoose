@@ -10,8 +10,8 @@ import {
   getSql,
   performRollover,
   readHonkCount,
+  readLifetimePots,
   readPins,
-  readPots,
   readWearing,
   seedPotsIfMissing,
 } from "./db";
@@ -47,7 +47,7 @@ export async function loadState(
     const today = raceDate(now);
     await seedPotsIfMissing(today);
     const [pots, wearing, honkCount, pins, flock, dressed, joke] = await Promise.all([
-      readPots(today),
+      readLifetimePots(),
       readWearing(),
       readHonkCount(),
       readPins(),
