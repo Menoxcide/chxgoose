@@ -34,24 +34,23 @@ async function sendTwilio(phone: string, message: string): Promise<{ ok: true; v
   return { ok: true, via: "twilio" };
 }
 
-async function sendResendGateway(phone: string, message: string): Promise<{ ok: true; via: string } | null> {
+async function sendEmail(message: string): Promise<{ ok: true; via: string } | null> {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return null;
-  const to = (process.env.ALERT_SMS_EMAIL?.trim() || attMmsEmail(phone))
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const toRaw = process.env.ALERT_EMAIL?.trim();
+  if (!apiKey || !toRaw) return null;
+  const to = toRaw.split(",").map((s) => s.trim()).filter(Boolean);
   const from = process.env.RESEND_FROM?.trim() || "Billie <onboarding@justindkamen.com>";
+  const subject = message.split("\n")[0]?.slice(0, 80) || "Billie";
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ from, to, subject: "Billie", text: message }),
+    body: JSON.stringify({ from, to, subject, text: message }),
   });
   if (!res.ok) throw new Error(`resend ${res.status}`);
-  return { ok: true, via: "resend-mms" };
+  return { ok: true, via: "email" };
 }
 
 async function sendTextbelt(phone: string, message: string): Promise<{ ok: true; via: string } | null> {
@@ -63,16 +62,33 @@ async function sendTextbelt(phone: string, message: string): Promise<{ ok: true;
     body: JSON.stringify({ phone, message, key }),
   });
   const data = (await res.json().catch(() => ({}))) as { success?: boolean; error?: string };
-  if (!res.ok || !data.success) throw new Error(data.error || `textbelt ${res.status}`);
+  if (!res.ok || !data.success) {
+    console.error("textbelt", data.error || res.status);
+    return null;
+  }
   return { ok: true, via: "textbelt" };
 }
 
-export async function sendSms(message: string, to = process.env.ALERT_PHONE): Promise<{ ok: true; via: string }> {
-  if (!to?.trim()) throw new Error("ALERT_PHONE missing");
-  const phone = e164(to);
-  const twilio = await sendTwilio(phone, message);
-  if (twilio) return twilio;
-  const textbelt = await sendTextbelt(phone, message);
-  if (textbelt) return textbelt;
-  throw new Error("no sms provider");
+export async function sendAlert(message: string): Promise<{ ok: true; via: string }> {
+  const phone = process.env.ALERT_PHONE?.trim();
+  if (phone) {
+    try {
+      const twilio = await sendTwilio(e164(phone), message);
+      if (twilio) return twilio;
+    } catch (err) {
+      console.error("twilio", err instanceof Error ? err.message : "fail");
+    }
+    try {
+      const textbelt = await sendTextbelt(e164(phone), message);
+      if (textbelt) return textbelt;
+    } catch (err) {
+      console.error("textbelt", err instanceof Error ? err.message : "fail");
+    }
+  }
+  const email = await sendEmail(message);
+  if (email) return email;
+  throw new Error("no alert provider");
 }
+
+/** @deprecated use sendAlert */
+export const sendSms = sendAlert;

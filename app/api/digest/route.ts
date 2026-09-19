@@ -4,7 +4,7 @@ import { previousRaceDate } from "@/lib/detroit";
 import { digestMetaKey, ensureSchema, readDayStats, readMeta, writeMeta } from "@/lib/db";
 import { formatDigestSms } from "@/lib/digest";
 import { noStore } from "@/lib/security";
-import { sendSms } from "@/lib/sms";
+import { sendAlert } from "@/lib/sms";
 
 export async function GET(req: Request) {
   if (!isCron(req)) {
@@ -20,7 +20,7 @@ export async function GET(req: Request) {
     }
     const stats = await readDayStats(day);
     const text = formatDigestSms(stats);
-    const sent = await sendSms(text);
+    const sent = await sendAlert(text);
     await writeMeta(key, sent.via);
     return noStore(NextResponse.json({ ok: true, day, via: sent.via, stats }));
   } catch (err) {

@@ -1,6 +1,6 @@
 import { after } from "next/server";
 import { AMOUNT_META, OUTFIT_META, isAmount, isVoteOutfit } from "./outfits";
-import { sendSms } from "./sms";
+import { sendAlert } from "./sms";
 
 export function formatPinSms(label: string): string {
   return `Billie pin: ${label.trim() || "somewhere"}`;
@@ -19,7 +19,7 @@ export function formatHonkSms(outfitId: string, amountCents: number): string {
 
 export function notifyOwner(message: string) {
   after(() =>
-    sendSms(message).catch((err) => {
+    sendAlert(message).catch((err) => {
       console.error("notify", err instanceof Error ? err.message : "fail");
     }),
   );
