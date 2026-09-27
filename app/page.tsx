@@ -34,7 +34,7 @@ export default async function Home() {
         {photo ? (
           <figure className="polaroid">
             <img className="portrait" src="/billie.jpg" alt="Billie on the porch at 905 Bridge" />
-            <figcaption>Billie, 905 Bridge. Currently: {look.name}.</figcaption>
+            <figcaption>Billie, 905 Bridge. Currently: Halloween costume designed by Billie.</figcaption>
           </figure>
         ) : (
           <p className="now">On her now: {look.name}</p>
