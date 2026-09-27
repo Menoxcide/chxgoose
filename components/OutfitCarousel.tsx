@@ -1,18 +1,20 @@
 "use client";
 
-import { OUTFIT_META, VOTE_OUTFIT_IDS, type VoteOutfitId } from "@/lib/outfits";
+import { OUTFIT_META, VOTE_OUTFIT_IDS, type OutfitId, type VoteOutfitId } from "@/lib/outfits";
 
 function dollars(cents: number) {
   return `$${(cents / 100).toFixed(0)}`;
 }
 
 export function OutfitCarousel({
+  wearing,
   winning,
   potMap,
   degraded,
   busy,
   onHonk,
 }: {
+  wearing: OutfitId;
   winning: VoteOutfitId | null;
   potMap: Map<VoteOutfitId, number>;
   degraded: boolean;
@@ -29,6 +31,7 @@ export function OutfitCarousel({
             <div className="slide-meta">
               <div className="name">
                 {meta.name}
+                {id === wearing ? <span className="now-tag">on her now</span> : null}
                 {id === winning ? <span className="lead-tag">winning</span> : null}
                 <a href={meta.amazon} target="_blank" rel="noopener noreferrer">
                   Amazon

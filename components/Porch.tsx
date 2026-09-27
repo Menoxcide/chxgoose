@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import { HONK_DISCLAIMER, HONK_FAIL } from "@/lib/copy";
+import { orderLine, shareText, visitorsLine } from "@/lib/porch";
 import {
   AMOUNT_META,
   AMOUNTS,
@@ -24,6 +25,7 @@ export function Porch({ state }: { state: PublicState }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [honked, setHonked] = useState(false);
+  const [shared, setShared] = useState<string | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -66,16 +68,21 @@ export function Porch({ state }: { state: PublicState }) {
 
   async function share() {
     const url = "https://chxgoose.com";
-    const text = "You found Billie! Porch goose at 905 Bridge.";
+    const text = shareText(live.joke);
     try {
       if (navigator.share) {
         await navigator.share({ title: "Billie", text, url });
         return;
       }
-    } catch {
-      /* fall through */
+    } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
     }
-    await navigator.clipboard.writeText(url);
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      setShared("Copied");
+    } catch {
+      setShared(null);
+    }
   }
 
   return (
@@ -88,10 +95,14 @@ export function Porch({ state }: { state: PublicState }) {
             ? ` Right now ${OUTFIT_META[winning].name} is winning.`
             : " First honk starts the race."}
         </p>
+        {live.order ? (
+          <p className="order">{orderLine(OUTFIT_META[live.order.outfitId].name, live.order.status)}</p>
+        ) : null}
         {live.degraded && <p className="warn">Honks are offline.</p>}
         {error && <p className="warn">{error}</p>}
         <p className="swipe-hint">Swipe for looks</p>
         <OutfitCarousel
+          wearing={live.wearing}
           winning={winning}
           potMap={potMap}
           degraded={live.degraded}
@@ -125,10 +136,10 @@ export function Porch({ state }: { state: PublicState }) {
       <footer className="footer">
         <div className="footer-bar">
           <p>
-            {live.honkCount} honks · 905 Bridge · outfits from Amazon
+            {visitorsLine(live.visitors)} · {live.honkCount} honks · 905 Bridge · outfits from Amazon
           </p>
           <button className="share" type="button" onClick={share}>
-            Tell someone
+            {shared ?? "Tell someone"}
           </button>
         </div>
         <p className="legal">

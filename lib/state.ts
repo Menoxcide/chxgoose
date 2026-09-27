@@ -12,8 +12,11 @@ import {
   readGuestbook,
   readHonkCount,
   readLifetimePots,
+  readOrder,
   readPins,
+  readVisitorCount,
   readWearing,
+  readWearingCaption,
   seedPotsIfMissing,
 } from "./db";
 
@@ -25,10 +28,13 @@ export function staticState(
   const today = raceDate(now);
   return {
     wearing: DEFAULT_OUTFIT,
+    wearingCaption: null,
+    order: null,
     winning: null,
     pots: [],
     pins: [],
     honkCount: 0,
+    visitors: 0,
     flockCount: 0,
     joke: jokeOfTheDay(now),
     jokeKind: jokeKindFor(now),
@@ -52,22 +58,29 @@ export async function loadState(
     await performRollover(now);
     const today = raceDate(now);
     await seedPotsIfMissing(today);
-    const [pots, wearing, honkCount, pins, flock, dressed, daily, guestbook] = await Promise.all([
-      readLifetimePots(),
-      readWearing(),
-      readHonkCount(),
-      readPins(),
-      flockCount(),
-      dressedFor(),
-      dailyJoke(now),
-      readGuestbook(),
-    ]);
+    const [pots, wearing, wearingCaption, order, honkCount, visitors, pins, flock, dressed, daily, guestbook] =
+      await Promise.all([
+        readLifetimePots(),
+        readWearing(),
+        readWearingCaption(),
+        readOrder(),
+        readHonkCount(),
+        readVisitorCount(),
+        readPins(),
+        flockCount(),
+        dressedFor(),
+        dailyJoke(now),
+        readGuestbook(),
+      ]);
     return {
       wearing,
+      wearingCaption,
+      order,
       winning: leader(pots),
       pots: pots.map((p) => ({ outfitId: p.outfitId, amountCents: p.amountCents })),
       pins,
       honkCount,
+      visitors,
       flockCount: flock,
       joke: daily.text,
       jokeKind: daily.kind,

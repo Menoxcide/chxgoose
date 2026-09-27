@@ -1,6 +1,7 @@
 import { neon } from "@neondatabase/serverless";
 import { emptyPots, leader, type Pot } from "./race";
 import { DEFAULT_OUTFIT, OUTFIT_META, isOutfit, isVoteOutfit, type OutfitId } from "./outfits";
+import { isOrderStatus, type OwnerUpdate, type PorchOrder } from "./porch";
 import { raceDate } from "./detroit";
 import { censorText } from "./censor";
 import type { DayStats } from "./digest";
@@ -79,6 +80,39 @@ export async function writeMeta(key: string, value: string) {
 export async function readWearing(): Promise<OutfitId> {
   const v = await readMeta("wearing_outfit_id");
   return v && isOutfit(v) ? v : DEFAULT_OUTFIT;
+}
+
+export async function readWearingCaption(): Promise<string | null> {
+  const v = await readMeta("wearing_caption");
+  const text = v?.trim();
+  return text ? text : null;
+}
+
+export async function readOrder(): Promise<PorchOrder | null> {
+  const [id, status] = await Promise.all([readMeta("order_outfit_id"), readMeta("order_status")]);
+  if (!id || !status || !isVoteOutfit(id) || !isOrderStatus(status)) return null;
+  return { outfitId: id, status };
+}
+
+export async function applyOwnerUpdate(update: OwnerUpdate) {
+  if ("caption" in update) await writeMeta("wearing_caption", update.caption ?? "");
+  if (update.wearing) await writeMeta("wearing_outfit_id", update.wearing);
+  if ("order" in update) {
+    if (!update.order) {
+      await writeMeta("order_outfit_id", "");
+      await writeMeta("order_status", "");
+    } else {
+      await writeMeta("order_outfit_id", update.order.outfitId);
+      await writeMeta("order_status", update.order.status);
+    }
+  }
+}
+
+export async function readVisitorCount(): Promise<number> {
+  const sql = getSql();
+  if (!sql) return 0;
+  const rows = await sql`SELECT count(DISTINCT visitor_hash)::int AS n FROM visits`;
+  return Number(rows[0]?.n ?? 0);
 }
 
 export async function readHonkCount(): Promise<number> {

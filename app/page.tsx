@@ -2,7 +2,9 @@ import { existsSync } from "fs";
 import { join } from "path";
 import { cookies } from "next/headers";
 import { OUTFIT_META, isOutfit } from "@/lib/outfits";
+import { PORCH_LOOKS } from "@/lib/looks";
 import { BOOK_COOKIE, PIN_COOKIE } from "@/lib/pin";
+import { wearingLine } from "@/lib/porch";
 import { loadState } from "@/lib/state";
 import { Porch } from "@/components/Porch";
 
@@ -17,6 +19,7 @@ export default async function Home() {
   );
   const wearing = isOutfit(state.wearing) ? state.wearing : "football";
   const look = OUTFIT_META[wearing];
+  const onHer = wearingLine(state.wearingCaption, look.name);
   const photo = existsSync(join(process.cwd(), "public", "billie.jpg"));
 
   return (
@@ -34,11 +37,22 @@ export default async function Home() {
         {photo ? (
           <figure className="polaroid">
             <img className="portrait" src="/billie.jpg" alt="Billie on the porch at 905 Bridge" />
-            <figcaption>Billie, 905 Bridge. Currently: Halloween costume designed by Billie.</figcaption>
+            <figcaption>Billie, 905 Bridge. Currently: {onHer}.</figcaption>
           </figure>
         ) : (
-          <p className="now">On her now: {look.name}</p>
+          <p className="now">On her now: {onHer}</p>
         )}
+        <section className="looks" aria-label="Past looks">
+          <h2>Past looks</h2>
+          <div className="look-row">
+            {PORCH_LOOKS.map((item) => (
+              <figure key={item.src} className="look">
+                <img src={item.src} alt={item.label} />
+                <figcaption>{item.label}</figcaption>
+              </figure>
+            ))}
+          </div>
+        </section>
       </header>
 
       <section className="joke" aria-label="Joke of the day">
