@@ -1,14 +1,23 @@
 import { existsSync } from "fs";
 import { join } from "path";
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import { OUTFIT_META, isOutfit } from "@/lib/outfits";
+import { JsonLd } from "@/components/JsonLd";
+import { Porch } from "@/components/Porch";
+import { servedSize } from "@/lib/images";
 import { PORCH_LOOKS } from "@/lib/looks";
+import { OUTFIT_META, isOutfit } from "@/lib/outfits";
 import { BOOK_COOKIE, PIN_COOKIE } from "@/lib/pin";
 import { wearingLine } from "@/lib/porch";
+import { homeJsonLd } from "@/lib/seo";
 import { loadState } from "@/lib/state";
-import { Porch } from "@/components/Porch";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { url: "/" },
+};
 
 export default async function Home() {
   const jar = await cookies();
@@ -20,14 +29,38 @@ export default async function Home() {
   const wearing = isOutfit(state.wearing) ? state.wearing : "football";
   const look = OUTFIT_META[wearing];
   const onHer = wearingLine(state.wearingCaption, look.name);
-  const photo = existsSync(join(process.cwd(), "public", "billie.jpg"));
+  const jpg = existsSync(join(process.cwd(), "public", "billie.jpg"));
+  const webp = existsSync(join(process.cwd(), "public", "billie.webp"));
+  const photo = jpg || webp;
+  const portrait = webp
+    ? { src: "/billie.webp", ...servedSize("/billie.webp") }
+    : { src: "/billie.jpg", width: 1800, height: 2400 };
+  const pot = servedSize("/ui/goose-pot.webp");
+  const hang = servedSize("/ui/goose-hang.webp");
 
   return (
     <main className="porch">
+      <JsonLd data={homeJsonLd()} />
       <header className="hero">
         <div className="baskets" aria-hidden="true">
-          <img src="/ui/goose-pot.jpg" alt="" className="basket" />
-          <img src="/ui/goose-hang.jpg" alt="" className="basket" />
+          <img
+            src="/ui/goose-pot.webp"
+            alt=""
+            width={pot.width}
+            height={pot.height}
+            className="basket"
+            decoding="async"
+            fetchPriority="low"
+          />
+          <img
+            src="/ui/goose-hang.webp"
+            alt=""
+            width={hang.width}
+            height={hang.height}
+            className="basket"
+            decoding="async"
+            fetchPriority="low"
+          />
         </div>
         <p className="eyebrow">905 Bridge · porch goose</p>
         <h1>You found Billie!</h1>
@@ -36,7 +69,15 @@ export default async function Home() {
         </p>
         {photo ? (
           <figure className="polaroid">
-            <img className="portrait" src="/billie.jpg" alt="Billie on the porch at 905 Bridge" />
+            <img
+              className="portrait"
+              src={portrait.src}
+              alt="Billie the porch goose on the porch at 905 Bridge"
+              width={portrait.width}
+              height={portrait.height}
+              fetchPriority="high"
+              decoding="async"
+            />
             <figcaption>Billie, 905 Bridge. Currently: {onHer}.</figcaption>
           </figure>
         ) : (
@@ -47,7 +88,14 @@ export default async function Home() {
           <div className="look-row">
             {PORCH_LOOKS.map((item) => (
               <figure key={item.src} className="look">
-                <img src={item.src} alt={item.label} />
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  width={item.width}
+                  height={item.height}
+                  loading="lazy"
+                  decoding="async"
+                />
                 <figcaption>{item.label}</figcaption>
               </figure>
             ))}

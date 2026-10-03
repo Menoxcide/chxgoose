@@ -1,6 +1,8 @@
 "use client";
 
+import { servedSize } from "@/lib/images";
 import { OUTFIT_META, VOTE_OUTFIT_IDS, type OutfitId, type VoteOutfitId } from "@/lib/outfits";
+import { outfitAlt } from "@/lib/seo";
 
 function dollars(cents: number) {
   return `$${(cents / 100).toFixed(0)}`;
@@ -27,7 +29,16 @@ export function OutfitCarousel({
         const meta = OUTFIT_META[id];
         return (
           <article key={id} className={id === winning ? "slide lead" : "slide"}>
-            <img className="slide-photo" src={meta.image} alt={meta.name} draggable={false} />
+            <img
+              className="slide-photo"
+              src={meta.image}
+              alt={outfitAlt(meta.name)}
+              width={servedSize(meta.image).width}
+              height={servedSize(meta.image).height}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+            />
             <div className="slide-meta">
               <div className="name">
                 {meta.name}

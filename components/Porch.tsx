@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { HONK_DISCLAIMER, HONK_FAIL } from "@/lib/copy";
+import { HONK_DISCLAIMER, HONK_FAIL, INFO_EMAIL } from "@/lib/copy";
+import { servedSize } from "@/lib/images";
+import { KEEPER_BIO, KEEPER_HEADING } from "@/lib/seo";
 import { orderLine, shareText, visitorsLine } from "@/lib/porch";
 import {
   AMOUNT_META,
@@ -113,7 +115,13 @@ export function Porch({ state }: { state: PublicState }) {
 
       <section className="map-block">
         <h2 className="with-mark">
-          <img src="/ui/pin.jpg" alt="" />
+          <img
+            src="/ui/pin.webp"
+            alt=""
+            width={servedSize("/ui/pin.webp").width}
+            height={servedSize("/ui/pin.webp").height}
+            decoding="async"
+          />
           Where’d you honk from?
         </h2>
         <p className="lede">
@@ -132,6 +140,13 @@ export function Porch({ state }: { state: PublicState }) {
         alreadySigned={live.alreadySigned}
         degraded={live.degraded}
       />
+
+      <section className="keeper">
+        <h2>{KEEPER_HEADING}</h2>
+        <p>
+          {KEEPER_BIO} Questions: <a href={`mailto:${INFO_EMAIL}`}>{INFO_EMAIL}</a>
+        </p>
+      </section>
 
       <footer className="footer">
         <div className="footer-bar">
@@ -184,7 +199,13 @@ export function Porch({ state }: { state: PublicState }) {
       {honked && (
         <div className="overlay" onClick={() => setHonked(false)} role="status">
           <div className="overlay-card">
-            <img src="/ui/stamp.jpg" alt="" />
+            <img
+              src="/ui/stamp.webp"
+              alt=""
+              width={servedSize("/ui/stamp.webp").width}
+              height={servedSize("/ui/stamp.webp").height}
+              decoding="async"
+            />
             Honk! Billie felt that.
           </div>
         </div>

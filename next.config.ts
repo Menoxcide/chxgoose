@@ -1,17 +1,11 @@
 import type { NextConfig } from "next";
+import { hostRedirects } from "./lib/redirects";
 import { SECURITY_HEADERS } from "./lib/security";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "www.chxgoose.com" }],
-        destination: "https://chxgoose.com/:path*",
-        permanent: true,
-      },
-    ];
+    return hostRedirects();
   },
   async headers() {
     return [

@@ -25,42 +25,42 @@ export const OUTFIT_META: Record<OutfitId, OutfitMeta> = {
   football: {
     name: "Football",
     amazon: "https://www.amazon.com/dp/B0FVFL5Z6J",
-    image: "/outfits/football/0.jpg",
+    image: "/outfits/football/0.webp",
   },
   farmer: {
     name: "Harvest farmer",
     amazon: "https://www.amazon.com/dp/B0H8GWBV17",
-    image: "/outfits/farmer/0.jpg",
+    image: "/outfits/farmer/0.webp",
   },
   scarecrow: {
     name: "Fall scarecrow",
     amazon: "https://www.amazon.com/dp/B0H36DD2NF",
-    image: "/outfits/scarecrow/0.jpg",
+    image: "/outfits/scarecrow/0.webp",
   },
   maple: {
     name: "Maple leaf",
     amazon: "https://www.amazon.com/dp/B0HBP15VG2",
-    image: "/outfits/maple/0.jpg",
+    image: "/outfits/maple/0.webp",
   },
   "maple-dress": {
     name: "Maple dress",
     amazon: "https://www.amazon.com/dp/B0H3YW591W",
-    image: "/outfits/maple-dress/0.jpg",
+    image: "/outfits/maple-dress/0.webp",
   },
   leaves: {
     name: "Fall leaves",
     amazon: "https://www.amazon.com/dp/B0H83P8K38",
-    image: "/outfits/leaves/0.jpg",
+    image: "/outfits/leaves/0.webp",
   },
   wizard: {
     name: "Halloween wizard",
     amazon: "https://www.amazon.com/dp/B0FFSQC6S5",
-    image: "/outfits/wizard/0.jpg",
+    image: "/outfits/wizard/0.webp",
   },
   overalls: {
     name: "Blue overalls",
     amazon: "https://www.amazon.com/dp/B0GR4L5CRZ",
-    image: "/outfits/overalls/0.jpg",
+    image: "/outfits/overalls/0.webp",
   },
 };
 

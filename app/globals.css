@@ -30,7 +30,7 @@ body {
   background-color: var(--sand);
   background-image:
     linear-gradient(rgba(232, 215, 184, 0.72), rgba(232, 215, 184, 0.78)),
-    url("/ui/wood.jpg");
+    url("/ui/wood.webp");
   background-size: auto, 420px;
   background-repeat: repeat;
 }
@@ -71,6 +71,7 @@ img {
 .basket {
   width: 28%;
   max-width: 140px;
+  aspect-ratio: 1;
   mix-blend-mode: multiply;
 }
 
@@ -114,6 +115,8 @@ h1 {
   display: block;
   width: 100%;
   height: auto;
+  aspect-ratio: 1280 / 1707;
+  background: var(--cream);
 }
 
 .polaroid figcaption {
@@ -133,7 +136,7 @@ h1 {
   background-color: var(--cream);
   background-image:
     linear-gradient(rgba(246, 234, 212, 0.2), rgba(246, 234, 212, 0.28)),
-    url("/ui/plaque.jpg");
+    url("/ui/plaque.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -443,7 +446,7 @@ h2 {
   background-color: var(--cream);
   background-image:
     linear-gradient(rgba(246, 234, 212, 0.28), rgba(246, 234, 212, 0.36)),
-    url("/ui/paper.jpg");
+    url("/ui/paper.webp");
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -553,6 +556,50 @@ h2 {
 .legal a {
   color: inherit;
   text-decoration: underline;
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.45rem;
+  margin: 0 0 0.85rem;
+  padding: 0;
+  list-style: none;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.crumbs li {
+  display: flex;
+  gap: 0.45rem;
+  color: var(--clay);
+}
+
+.crumbs li + li::before {
+  content: "/";
+}
+
+.faq {
+  margin-top: 0.4rem;
+}
+
+.faq h3 {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.2rem;
+  margin: 1.05rem 0 0.25rem;
+  color: var(--umber);
+}
+
+.keeper {
+  margin: 1.5rem 0 0.2rem;
+}
+
+.keeper p,
+.faq p {
+  line-height: 1.5;
 }
 
 .legal-page h1 {
